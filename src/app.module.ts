@@ -1,23 +1,16 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CORSMiddleware } from './middleware/cors';
-import { ConfigModule } from '@nestjs/config';
-import { FileSystemModule } from './resource/fileSystem/fileSystem.module';
-import { OssModule } from './resource/oss/oss.module';
-import configuration from './config/configuration';
+import { AuthModule } from './auth/auth.module';
+import { DatabaseModule } from './database/database.module';
+import { ConfigurationModule } from './configuration/configuration.module';
+import { RouterModule } from './router/router.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ load: [configuration], isGlobal: true }),
-    FileSystemModule,
-    OssModule,
-  ],
+  imports: [ConfigurationModule, DatabaseModule, AuthModule, RouterModule],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CORSMiddleware).forRoutes('*');
-  }
+  configure() {}
 }
