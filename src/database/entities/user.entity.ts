@@ -7,6 +7,8 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { Permission } from './permission.entity';
@@ -41,6 +43,7 @@ export class User {
   @Column({
     name: 'avatar',
     nullable: true,
+    default: '',
   })
   avatar?: string;
 
@@ -52,20 +55,12 @@ export class User {
   })
   status: UserStatus;
 
-  // 角色集合
-  @ManyToMany(() => Role, (role) => role.name, {
-    nullable: false,
+  // 角色
+  @ManyToOne(() => Role, (role) => role.name)
+  @JoinColumn({
+    name: 'role_name',
   })
-  @JoinTable({
-    name: 'user_role',
-    joinColumn: {
-      name: 'user_account',
-    },
-    inverseJoinColumn: {
-      name: 'role_name',
-    },
-  })
-  roles: Role[];
+  role: Role;
 
   // 权限集合
   @ManyToMany(() => Permission, (permission) => permission.id)

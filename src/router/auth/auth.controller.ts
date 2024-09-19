@@ -16,6 +16,21 @@ import { ResponseDto } from 'src/response/dto/response.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post('register')
+  @ApiOperation({ summary: '注册账号' })
+  @ApiOkResponse({
+    type: ResponseDto,
+    example: `{
+      "msg": "请求成功",
+      "code": 200,
+      "timestamp": 1726733020937
+    }`,
+  })
+  @Public()
+  async register(@Body() registerDto: RegisterDto) {
+    await this.authService.register(registerDto);
+  }
+
   @Post('login')
   @ApiOperation({ summary: '登录账号' })
   @ApiBody({ type: LoginDto })
@@ -42,20 +57,5 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   async login(@GetUser() user: User): Promise<LoginResponseDto> {
     return await this.authService.login(user);
-  }
-
-  @Post('register')
-  @ApiOperation({ summary: '注册账号' })
-  @ApiOkResponse({
-    type: ResponseDto,
-    example: `{
-      "msg": "请求成功",
-      "code": 200,
-      "timestamp": 1726733020937
-    }`,
-  })
-  @Public()
-  async register(@Body() registerDto: RegisterDto) {
-    await this.authService.register(registerDto);
   }
 }

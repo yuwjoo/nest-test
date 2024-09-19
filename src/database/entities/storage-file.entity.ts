@@ -27,7 +27,7 @@ export class StorageFile {
   @Column({
     name: 'level',
   })
-  level: string;
+  level: number;
 
   // 名称
   @Column({

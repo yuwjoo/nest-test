@@ -15,8 +15,8 @@ export class UserDto {
   @ApiProperty({ description: '状态', enum: UserStatus })
   status: UserStatus;
 
-  @ApiProperty({ description: '角色列表', type: [RoleDto] })
-  roles: RoleDto[];
+  @ApiProperty({ description: '角色' })
+  role: RoleDto;
 
   @ApiProperty({ description: '存储起点' })
   storageOrigin: string;
@@ -26,7 +26,7 @@ export class UserDto {
     this.nickname = user.nickname;
     this.avatar = user.avatar;
     this.status = user.status;
-    this.roles = user.roles.map((role) => new RoleDto(role));
+    this.role = new RoleDto(user.role);
     this.storageOrigin = user.storageOrigin;
   }
 }

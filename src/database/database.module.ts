@@ -30,4 +30,77 @@ import { StorageFile } from './entities/storage-file.entity';
     }),
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule {
+  constructor(private readonly dataSource: DataSource) {
+    this.init();
+  }
+
+  /**
+   * @description: 初始化数据库
+   */
+  async init() {
+    await this.dataSource.manager.save(StorageFile, [
+      {
+        path: '/',
+        parent: '',
+        level: 1,
+        name: '/',
+        isDirectory: true,
+      },
+      {
+        path: '/public',
+        parent: '/',
+        level: 2,
+        name: 'public',
+        isDirectory: true,
+      },
+      {
+        path: '/admin',
+        parent: '/',
+        level: 2,
+        name: 'admin',
+        isDirectory: true,
+      },
+    ]);
+    const permissions = await this.dataSource.manager.save(Permission, [
+      {
+        path: '/',
+        level: 1,
+        readable: true,
+        writable: true,
+      },
+      {
+        path: '/public',
+        level: 2,
+        readable: true,
+        writable: true,
+      },
+      {
+        path: '/admin',
+        level: 2,
+        readable: true,
+        writable: true,
+      },
+    ]);
+    const roles = await this.dataSource.manager.save(Role, [
+      {
+        name: 'admin',
+        describe: '管理员',
+        permissions: permissions.filter((p) => p.path === '/'),
+      },
+      {
+        name: 'user',
+        describe: '普通用户',
+        permissions: permissions.filter((p) => p.path === '/public'),
+      },
+    ]);
+    await this.dataSource.manager.save(User, {
+      account: 'admin',
+      password: '123456',
+      nickname: '管理员',
+      role: roles.find((role) => role.name === 'admin'),
+      permissions: permissions.filter((p) => p.path === '/admin'),
+      storageOrigin: '/admin',
+    });
+  }
+}
