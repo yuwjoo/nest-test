@@ -16,7 +16,7 @@ export class Permission {
   @Column({
     name: 'level',
   })
-  level: string;
+  level: number;
 
   // 可读
   @Column({
