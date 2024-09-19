@@ -20,7 +20,7 @@ export class UserService {
    */
   findOne(account: string): Promise<User> {
     return this.userRepository.findOne({
-      relations: ['role', 'permissions', 'loginRecords'],
+      relations: ['role', 'role.permissions', 'permissions', 'loginRecords'],
       where: { account },
     });
   }
