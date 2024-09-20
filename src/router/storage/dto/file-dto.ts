@@ -10,6 +10,9 @@ export class FileDto {
   @ApiProperty({ description: '层级' })
   level: number;
 
+  @ApiProperty({ description: '大小' })
+  size: number;
+
   @ApiProperty({ description: '名称' })
   name: string;
 
@@ -21,4 +24,10 @@ export class FileDto {
 
   @ApiProperty({ description: '更新时间戳' })
   updatedTime: number;
+
+  @ApiProperty({ description: '可读' })
+  readable: boolean;
+
+  @ApiProperty({ description: '可写' })
+  writable: boolean;
 }

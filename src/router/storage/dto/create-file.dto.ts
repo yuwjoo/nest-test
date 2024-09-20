@@ -13,8 +13,8 @@ export class CreateFileDto {
   name: string;
 
   @ApiProperty({ description: '是否文件夹', example: true })
-  @IsBoolean({ message: '名称必须为布尔值' })
-  isDirectory: boolean;
+  @IsBoolean({ message: 'isDirectory必须为布尔值' })
+  isDirectory: boolean = false;
 
   @ApiProperty({ description: 'oss文件id', example: '' })
   @IsOptional()
