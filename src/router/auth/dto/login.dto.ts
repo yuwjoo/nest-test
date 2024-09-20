@@ -8,6 +8,8 @@ export class LoginDto {
   password: string;
 
   constructor(loginDto: LoginDto) {
+    if (!loginDto) return;
+
     this.account = loginDto.account;
     this.password = loginDto.password;
   }

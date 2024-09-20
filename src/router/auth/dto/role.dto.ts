@@ -8,6 +8,8 @@ export class RoleDto {
   describe?: string;
 
   constructor(role: RoleDto) {
+    if (!role) return;
+
     this.name = role.name;
     this.describe = role.describe;
   }

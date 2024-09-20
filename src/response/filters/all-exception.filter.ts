@@ -13,7 +13,7 @@ import { RESPONSE_CODE, RESPONSE_MSG } from '../types/response.enum';
  */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  catch(_exception: unknown, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const data = createResponse(
@@ -23,5 +23,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     );
 
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(data);
+
+    throw exception;
   }
 }

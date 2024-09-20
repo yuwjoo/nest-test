@@ -19,10 +19,18 @@ export class UserService {
    * @return {User} 用户数据
    */
   findOne(account: string): Promise<User> {
-    return this.userRepository.findOne({
-      relations: ['role', 'role.permissions', 'permissions', 'loginRecords'],
-      where: { account },
-    });
+    return this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.role', 'role')
+      .leftJoinAndSelect('user.permissions', 'userPermission')
+      .leftJoinAndSelect('user.loginRecords', 'userLoginRecord')
+      .leftJoinAndSelect('role.permissions', 'rolePermission')
+      .where('user.account = :account', { account })
+      .orderBy({
+        'userPermission.level': 'DESC',
+        'rolePermission.level': 'DESC',
+      })
+      .getOne();
   }
 
   /**

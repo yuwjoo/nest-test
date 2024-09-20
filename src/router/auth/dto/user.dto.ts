@@ -22,6 +22,8 @@ export class UserDto {
   storageOrigin: string;
 
   constructor(user: UserDto) {
+    if (!user) return;
+
     this.account = user.account;
     this.nickname = user.nickname;
     this.avatar = user.avatar;

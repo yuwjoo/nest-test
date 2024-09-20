@@ -16,9 +16,11 @@ export class RegisterDto {
   @IsString({ message: '昵称必须为字符串' })
   nickname: string;
 
-  constructor(account: string, password: string, nickname: string) {
-    this.account = account;
-    this.password = password;
-    this.nickname = nickname;
+  constructor(register: RegisterDto) {
+    if (!register) return;
+
+    this.account = register.account;
+    this.password = register.password;
+    this.nickname = register.nickname;
   }
 }

@@ -16,6 +16,7 @@ async function bootstrap() {
   app.useStaticAssets('public', { prefix: '/static' }); // 静态资源服务
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: true,
       transform: true,
       exceptionFactory: (errors: ValidationError[]) => {
         return new BadRequestException(

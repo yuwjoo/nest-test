@@ -4,11 +4,11 @@ import { LoginRecord } from 'src/database/entities/login-record.entity';
 import { User } from 'src/database/entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { AuthService as FunAuthService } from 'src/auth/auth.service';
-import { LoginResponseDto } from './dto/login-response.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Permission } from 'src/database/entities/permission.entity';
 import { Role } from 'src/database/entities/role.entity';
 import { StorageFile } from 'src/database/entities/storage-file.entity';
+import { LoginVo } from './vo/login.vo';
 
 @Injectable()
 export class AuthService {
@@ -66,9 +66,9 @@ export class AuthService {
   /**
    * @description: 登录
    * @param {User} user 用户信息
-   * @return {Promise<LoginResponseDto>} 登录信息
+   * @return {Promise<LoginVo>} 登录信息
    */
-  async login(user: User): Promise<LoginResponseDto> {
+  async login(user: User): Promise<LoginVo> {
     const token = this.authService.generateToken(user);
 
     await this.dataSource.transaction(async (manager) => {
@@ -78,7 +78,7 @@ export class AuthService {
       manager.save(LoginRecord, { user, token });
     });
 
-    return new LoginResponseDto({ user, token });
+    return new LoginVo({ user, token });
   }
 
   /**

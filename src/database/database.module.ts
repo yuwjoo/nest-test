@@ -100,7 +100,7 @@ export class DatabaseModule {
       nickname: '管理员',
       role: roles.find((role) => role.name === 'admin'),
       permissions: permissions.filter((p) => p.path === '/admin'),
-      storageOrigin: '/admin',
+      storageOrigin: '/',
     });
   }
 }
