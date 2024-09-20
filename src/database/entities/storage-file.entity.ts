@@ -6,6 +6,7 @@ import {
   PrimaryColumn,
   DeleteDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { OssFile } from './oss-file.entity';
 
@@ -41,8 +42,16 @@ export class StorageFile {
   })
   isDirectory: boolean;
 
+  // 大小
+  @Column({
+    name: 'size',
+    default: 0,
+  })
+  size: number;
+
   // 关联的oss文件
   @ManyToOne(() => OssFile)
+  @JoinColumn({ name: 'oss_file_id' })
   ossFile?: OssFile;
 
   // 创建时间
