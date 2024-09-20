@@ -20,15 +20,4 @@ export class UserDto {
 
   @ApiProperty({ description: '存储起点' })
   storageOrigin: string;
-
-  constructor(user: UserDto) {
-    if (!user) return;
-
-    this.account = user.account;
-    this.nickname = user.nickname;
-    this.avatar = user.avatar;
-    this.status = user.status;
-    this.role = new RoleDto(user.role);
-    this.storageOrigin = user.storageOrigin;
-  }
 }

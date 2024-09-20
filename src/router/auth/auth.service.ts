@@ -78,7 +78,7 @@ export class AuthService {
       manager.save(LoginRecord, { user, token });
     });
 
-    return new LoginVo({ user, token });
+    return new LoginVo(token, user);
   }
 
   /**

@@ -5,6 +5,7 @@ import { User } from 'src/database/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StorageFile } from 'src/database/entities/storage-file.entity';
 import { Repository } from 'typeorm';
+import { FileListVo } from './vo/file-list.vo';
 
 @Injectable()
 export class StorageService {
@@ -17,19 +18,21 @@ export class StorageService {
    * @description: 获取列表
    * @param {User} user 用户信息
    * @param {FileListDto} fileListDto 参数
-   * @return {Promise<StorageFile[]>} 列表
+   * @return {Promise<FileListVo>} 列表
    */
-  async list(user: User, fileListDto: FileListDto): Promise<StorageFile[]> {
+  async list(user: User, fileListDto: FileListDto): Promise<FileListVo> {
     const storagePermission = getStoragePermission(user, fileListDto.path);
 
     if (!storagePermission.readable) {
       throw new BadRequestException('无权限访问');
     }
 
-    return await this.storageFileRepository.find({
+    const fileList = await this.storageFileRepository.find({
       where: {
         parent: fileListDto.path,
       },
     });
+
+    return new FileListVo(fileList);
   }
 }
