@@ -1,5 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  ValidationError,
+  ValidationPipe,
+} from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { initResponseModule } from './response/response';
@@ -13,8 +17,10 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      exceptionFactory: () => {
-        return new BadRequestException('参数不合法！');
+      exceptionFactory: (errors: ValidationError[]) => {
+        return new BadRequestException(
+          Object.values(errors[0].constraints)[0] || '参数不合法！',
+        );
       },
     }),
   ); // 全局校验管道

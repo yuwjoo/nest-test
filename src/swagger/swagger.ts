@@ -12,6 +12,7 @@ export function initSwaggerModule(app: NestExpressApplication) {
     .setTitle('API 文档')
     .setDescription('这是一个nestJS的API文档')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config, {
     extraModels: [ResponseDto, PageDataDto],

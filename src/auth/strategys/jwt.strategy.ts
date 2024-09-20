@@ -26,13 +26,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @return {User} 用户信息
    */
   async validate(request: Request, payload: CustomJwtPayload): Promise<User> {
-    const user = await this.authService.validateJWT(
-      ExtractJwt.fromAuthHeaderAsBearerToken()(request),
-      payload.account,
-    );
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+    const user = await this.authService.validateJWT(token, payload.account);
     if (!user) {
       throw new UnauthorizedException();
     }
+    request['token'] = token; // 将token添加到请求对象中
     return user;
   }
 }

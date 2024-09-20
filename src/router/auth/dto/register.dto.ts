@@ -15,4 +15,10 @@ export class RegisterDto {
   @ApiProperty({ description: '昵称', example: 'YH' })
   @IsString({ message: '昵称必须为字符串' })
   nickname: string;
+
+  constructor(account: string, password: string, nickname: string) {
+    this.account = account;
+    this.password = password;
+    this.nickname = nickname;
+  }
 }

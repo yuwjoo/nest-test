@@ -6,4 +6,9 @@ export class LoginDto {
 
   @ApiProperty({ description: '密码', example: '123456' })
   password: string;
+
+  constructor(loginDto: LoginDto) {
+    this.account = loginDto.account;
+    this.password = loginDto.password;
+  }
 }

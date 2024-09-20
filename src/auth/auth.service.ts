@@ -43,7 +43,7 @@ export class AuthService {
    */
   async validateJWT(token: string, account: string): Promise<User | null> {
     const user = await this.userService.findOne(account);
-    const available = user.loginRecords.find(
+    const available = user.loginRecords.some(
       (record) => record.token === token,
     );
     return available ? user : null;

@@ -32,7 +32,7 @@ import { StorageFile } from './entities/storage-file.entity';
 })
 export class DatabaseModule {
   constructor(private readonly dataSource: DataSource) {
-    this.init();
+    // this.init();
   }
 
   /**
