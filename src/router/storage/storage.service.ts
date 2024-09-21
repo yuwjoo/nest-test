@@ -12,6 +12,8 @@ import { CreateFileVo } from './vo/create-file.vo';
 import { RenameFileDto } from './dto/rename-file.dto';
 import { RenameFileVo } from './vo/rename-file.vo';
 import { DeleteFileDto } from './dto/delete-file.dto';
+import { MoveFileDto } from './dto/move-file.dto';
+import { MoveFileVo } from './vo/move-file.vo';
 
 @Injectable()
 export class StorageService {
@@ -136,7 +138,7 @@ export class StorageService {
             .where('path = :path', { path: oldFilePath })
             .execute();
 
-          await await transactionalEntityManager
+          await transactionalEntityManager
             .createQueryBuilder()
             .update(StorageFile)
             .set({
@@ -161,6 +163,59 @@ export class StorageService {
     });
 
     return new RenameFileVo(storageFile, storagePermission);
+  }
+
+  /**
+   * @description: 移动目录/文件
+   * @param {User} user 用户信息
+   * @param {MoveFileDto} moveFileDto 参数
+   * @return {Promise<MoveFileVo>} 文件信息
+   */
+  async move(user: User, moveFileDto: MoveFileDto): Promise<MoveFileVo> {
+    const oldFilePath = moveFileDto.oldParent + '/' + moveFileDto.name;
+    const newFilePath = moveFileDto.newParent + '/' + moveFileDto.name;
+    const oldPermission = getStoragePermission(user, moveFileDto.oldParent);
+    const newPermission = getStoragePermission(user, moveFileDto.newParent);
+
+    if (!oldPermission.writable || !newPermission.writable) {
+      throw new BadRequestException('无权限访问');
+    }
+
+    try {
+      await this.storageFileRepository.manager.transaction(
+        async (transactionalEntityManager) => {
+          await transactionalEntityManager
+            .createQueryBuilder()
+            .update(StorageFile)
+            .set({ path: newFilePath, parent: moveFileDto.newParent })
+            .where('path = :path', { path: oldFilePath })
+            .execute();
+
+          await transactionalEntityManager
+            .createQueryBuilder()
+            .update(StorageFile)
+            .set({
+              path: () => `REPLACE(path, '${oldFilePath}', '${newFilePath}')`,
+              parent: () =>
+                `REPLACE(parent, '${oldFilePath}', '${newFilePath}')`,
+            })
+            .where('parent = :parent OR parent LIKE :parentLike', {
+              parent: oldFilePath,
+              parentLike: `${oldFilePath}/%`,
+            })
+            .execute();
+        },
+      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      throw new BadRequestException('移动失败');
+    }
+
+    const storageFile = await this.storageFileRepository.findOne({
+      where: { path: newFilePath },
+    });
+
+    return new MoveFileVo(storageFile, newPermission);
   }
 
   /**

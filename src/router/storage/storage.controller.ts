@@ -11,6 +11,8 @@ import { RenameFileDto } from './dto/rename-file.dto';
 import { CreateFileVo } from './vo/create-file.vo';
 import { RenameFileVo } from './vo/rename-file.vo';
 import { DeleteFileDto } from './dto/delete-file.dto';
+import { MoveFileVo } from './vo/move-file.vo';
+import { MoveFileDto } from './dto/move-file.dto';
 
 @ApiTags('存储')
 @Controller('storage')
@@ -102,6 +104,33 @@ export class StorageController {
   @ApiBearerAuth()
   rename(@GetUser() user: User, @Body() renameFileDto: RenameFileDto) {
     return this.storageService.rename(user, renameFileDto);
+  }
+
+  @Post('move')
+  @ApiOperation({ summary: '移动目录/文件' })
+  @ApiCommonResponse({
+    type: MoveFileVo,
+    example: `{
+      "data": {
+        "path": "/yuwjoo/test3o",
+        "parent": "/yuwjoo",
+        "level": 3,
+        "size": 0,
+        "name": "test3o",
+        "isDirectory": true,
+        "createdTime": 1726824632000,
+        "updatedTime": 1726840647000,
+        "readable": true,
+        "writable": true
+      },
+      "msg": "请求成功",
+      "code": 200,
+      "timestamp": 1726840647796
+    }`,
+  })
+  @ApiBearerAuth()
+  move(@GetUser() user: User, @Body() moveFileDto: MoveFileDto) {
+    return this.storageService.move(user, moveFileDto);
   }
 
   @Post('delete')
