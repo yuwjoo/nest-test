@@ -5,9 +5,10 @@ import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigurationModule } from './configuration/configuration.module';
 import { RouterModule } from './router/router.module';
+import { OssModule } from './shared-modules/oss/oss.module';
 
 @Module({
-  imports: [ConfigurationModule, DatabaseModule, AuthModule, RouterModule],
+  imports: [ConfigurationModule, DatabaseModule, AuthModule, RouterModule, OssModule],
   controllers: [AppController],
   providers: [AppService],
 })

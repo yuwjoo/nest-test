@@ -18,9 +18,13 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+      stopAtFirstError: true,
       exceptionFactory: (errors: ValidationError[]) => {
         return new BadRequestException(
-          Object.values(errors[0].constraints)[0] || '参数不合法！',
+          Object.values(errors[0]?.constraints || {})[0] || '参数不合法！',
         );
       },
     }),

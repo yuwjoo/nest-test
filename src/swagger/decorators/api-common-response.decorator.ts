@@ -26,7 +26,14 @@ export const ApiCommonResponse = (options: Options) => {
               properties: {
                 data: {
                   type: options.isArray ? 'array' : undefined,
-                  $ref: getSchemaPath(options.type),
+                  items: {
+                    $ref: options.isArray
+                      ? getSchemaPath(options.type)
+                      : undefined,
+                  },
+                  $ref: options.isArray
+                    ? undefined
+                    : getSchemaPath(options.type),
                 },
               },
             },
