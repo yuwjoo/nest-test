@@ -111,6 +111,9 @@ export class UploadService {
     }
   }
 
+  /**
+   * @description: 上传回调
+   */
   async callback(uploadCallbackDto: UploadCallbackDto) {
     console.log(uploadCallbackDto);
   }
