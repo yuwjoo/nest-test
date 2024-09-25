@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Redirect } from '@nestjs/common';
 import { StorageService } from './storage.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
@@ -13,6 +13,11 @@ import { RenameFileVo } from './vo/rename-file.vo';
 import { DeleteFileDto } from './dto/delete-file.dto';
 import { MoveFileVo } from './vo/move-file.vo';
 import { MoveFileDto } from './dto/move-file.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
+import { Raw } from 'src/response/decorators/raw.decorator';
+import { GetFileCoverDto } from './dto/get-file-cover.dto';
+import { BatchDeleteFileDto } from './dto/batch-delete-file.dto';
+import { DownloadFileDto } from './dto/download-file.dto';
 
 @ApiTags('存储')
 @Controller('storage')
@@ -145,5 +150,50 @@ export class StorageController {
   @ApiBearerAuth()
   delete(@GetUser() user: User, @Body() deleteFileDto: DeleteFileDto) {
     return this.storageService.delete(user, deleteFileDto);
+  }
+
+  @Post('batchDelete')
+  @ApiOperation({ summary: '批量删除目录/文件' })
+  @ApiCommonResponse({
+    example: `{
+      "msg": "请求成功",
+      "code": 200,
+      "timestamp": 1726840647796
+    }`,
+  })
+  @ApiBearerAuth()
+  batchDelete(
+    @GetUser() user: User,
+    @Body() batchDeleteFileDto: BatchDeleteFileDto,
+  ) {
+    return this.storageService.batchDelete(user, batchDeleteFileDto);
+  }
+
+  @Get('getFileCover')
+  @ApiOperation({ summary: '获取文件封面' })
+  @ApiBearerAuth()
+  @Redirect()
+  @Public()
+  @Raw()
+  async getFileCover(@Query() getFileCoverDto: GetFileCoverDto) {
+    return { url: await this.storageService.getFileCover(getFileCoverDto) };
+  }
+
+  @Get('downloadFile')
+  @ApiOperation({ summary: '下载文件' })
+  @ApiCommonResponse({
+    example: `{
+      "data": "http://yuwjoo-private-cloud-storage.oss-cn-shenzhen.aliyuncs.com/1?OSSAccessKeyId=LTAI5tF7pE8QHGZr3QPr9WMi&Expires=1727255087&Signature=7P1B330PwWuADDZZ9IhNysEHIPI%3D&response-content-disposition=attachment%3B%20filename%3Dtest232",
+      "msg": "请求成功",
+      "code": 200,
+      "timestamp": 1727255081675
+    }`,
+  })
+  @ApiBearerAuth()
+  async downloadFile(
+    @GetUser() user: User,
+    @Query() downloadFileDto: DownloadFileDto,
+  ) {
+    return this.storageService.downloadFile(user, downloadFileDto);
   }
 }

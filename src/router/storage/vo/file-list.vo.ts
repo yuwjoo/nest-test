@@ -2,34 +2,40 @@ import { PageDataDto } from 'src/response/dto/page-data.dto';
 import { FileDto } from '../dto/file-dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { StorageFile } from 'src/database/entities/storage-file.entity';
-import { Permission } from 'src/database/entities/permission.entity';
+import { User } from 'src/database/entities/user.entity';
+import { getStoragePermission } from 'src/utils/common';
 
 export class FileListVo extends PageDataDto {
   @ApiProperty({ description: '文件列表', type: [FileDto] })
   records: FileDto[];
 
-  constructor(
-    storageFile: StorageFile[],
-    permission: Pick<Permission, 'readable' | 'writable'>,
-  ) {
+  constructor(user: User, storageFiles: StorageFile[]) {
     super();
 
-    this.current = 1;
-    this.size = storageFile.length;
-    this.total = storageFile.length;
-    this.records = storageFile.map<FileDto>((item) => {
-      return {
-        path: item.path,
-        parent: item.parent,
-        level: item.level,
-        size: item.size,
-        name: item.name,
-        isDirectory: item.isDirectory,
-        createdTime: item.createdDate.getTime(),
-        updatedTime: item.updatedDate.getTime(),
-        readable: permission.readable,
-        writable: permission.writable,
-      };
+    const list: FileDto[] = [];
+
+    storageFiles.forEach((file) => {
+      const permission = getStoragePermission(user, file.path);
+
+      if (permission.readable) {
+        list.push({
+          path: file.path,
+          parent: file.parent,
+          level: file.level,
+          size: file.size,
+          name: file.name,
+          isDirectory: file.isDirectory,
+          createdTime: file.createdDate.getTime(),
+          updatedTime: file.updatedDate.getTime(),
+          readable: permission.readable,
+          writable: permission.writable,
+        });
+      }
     });
+
+    this.current = 1;
+    this.size = list.length;
+    this.total = list.length;
+    this.records = list;
   }
 }

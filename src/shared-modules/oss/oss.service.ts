@@ -35,6 +35,21 @@ export class OssService {
   }
 
   /**
+   * @description: 签名下载url
+   * @param {string} object oss对象
+   * @param {string} name 文件名称
+   * @return {Promise<string>} 签名url
+   */
+  async signDownloadUrl(object: string, name: string): Promise<string> {
+    return this.admin.signatureUrl(object, {
+      expires: this.configService.get('oss.downloadSignExpire'), // 签名url过期时间（秒）
+      response: {
+        'content-disposition': `attachment; filename=${encodeURIComponent(name)}`, // 下载文件名
+      },
+    });
+  }
+
+  /**
    * @description: 签名简单上传url
    * @param {User} user 用户
    * @param {string} object oss对象

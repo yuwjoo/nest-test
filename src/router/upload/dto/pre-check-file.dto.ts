@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class PreCheckFileDto {
@@ -19,6 +20,7 @@ export class PreCheckFileDto {
   mimeType: string;
 
   @ApiProperty({ description: '是否分片上传', required: false })
+  @Transform(({ value }) => value === 'true')
   @IsBoolean({ message: 'multipart必须为布尔值' })
   multipart: boolean = false;
 }

@@ -14,6 +14,12 @@ import { RenameFileVo } from './vo/rename-file.vo';
 import { DeleteFileDto } from './dto/delete-file.dto';
 import { MoveFileDto } from './dto/move-file.dto';
 import { MoveFileVo } from './vo/move-file.vo';
+import { OssService } from 'src/shared-modules/oss/oss.service';
+import { UserService } from 'src/shared-modules/user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { GetFileCoverDto } from './dto/get-file-cover.dto';
+import { BatchDeleteFileDto } from './dto/batch-delete-file.dto';
+import { DownloadFileDto } from './dto/download-file.dto';
 
 @Injectable()
 export class StorageService {
@@ -22,6 +28,9 @@ export class StorageService {
     private readonly storageFileRepository: Repository<StorageFile>,
     @InjectRepository(OssFile)
     private readonly ossFileRepository: Repository<OssFile>,
+    private readonly ossService: OssService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   /**
@@ -31,19 +40,13 @@ export class StorageService {
    * @return {Promise<FileListVo>} 列表
    */
   async list(user: User, fileListDto: FileListDto): Promise<FileListVo> {
-    const storagePermission = getStoragePermission(user, fileListDto.parent);
-
-    if (!storagePermission.readable) {
-      throw new BadRequestException('无权限访问');
-    }
-
     const fileList = await this.storageFileRepository.find({
       where: {
         parent: fileListDto.parent,
       },
     });
 
-    return new FileListVo(fileList, storagePermission);
+    return new FileListVo(user, fileList);
   }
 
   /**
@@ -240,5 +243,83 @@ export class StorageService {
         pathLike: `${deleteFileDto.path}/%`,
       })
       .execute();
+  }
+
+  /**
+   * @description: 批量删除目录/文件
+   * @param {User} user 用户信息
+   * @param {BatchDeleteFileDto} batchDeleteFileDto 参数
+   */
+  async batchDelete(user: User, batchDeleteFileDto: BatchDeleteFileDto) {
+    await Promise.all(
+      batchDeleteFileDto.paths.map((path) => this.delete(user, { path })),
+    );
+  }
+
+  /**
+   * @description: 获取文件封面
+   * @param {GetFileCoverDto} getFileCoverDto 参数
+   * @return {Promise<string>} 签名url
+   */
+  async getFileCover(getFileCoverDto: GetFileCoverDto): Promise<string> {
+    let account: string;
+
+    try {
+      account = await this.jwtService.verify(getFileCoverDto.token).account;
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
+
+    const user = await this.userService.findOne(account);
+
+    const permission = getStoragePermission(user, getFileCoverDto.path);
+
+    if (!permission.readable) {
+      throw new BadRequestException('无权限访问');
+    }
+
+    const storageFile = await this.storageFileRepository.findOne({
+      relations: ['ossFile'],
+      where: { path: getFileCoverDto.path },
+    });
+
+    if (!storageFile.ossFile) {
+      throw new BadRequestException('未找到oss资源');
+    }
+
+    return this.ossService.admin.signatureUrl(storageFile.ossFile.object, {
+      expires: 60,
+      process: 'image/resize,w_80',
+    });
+  }
+
+  /**
+   * @description: 下载文件
+   * @param {DownloadFileDto} downloadFileDto 参数
+   * @return {Promise<string>} 签名url
+   */
+  async downloadFile(
+    user: User,
+    downloadFileDto: DownloadFileDto,
+  ): Promise<string> {
+    const permission = getStoragePermission(user, downloadFileDto.path);
+
+    if (!permission.readable) {
+      throw new BadRequestException('无权限访问');
+    }
+
+    const storageFile = await this.storageFileRepository.findOne({
+      relations: ['ossFile'],
+      where: { path: downloadFileDto.path },
+    });
+
+    if (!storageFile.ossFile) {
+      throw new BadRequestException('未找到oss资源');
+    }
+
+    return this.ossService.signDownloadUrl(
+      storageFile.ossFile.object,
+      storageFile.name,
+    );
   }
 }

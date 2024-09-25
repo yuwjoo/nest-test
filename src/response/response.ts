@@ -4,7 +4,6 @@ import { CommonResponse } from './types/response.interface';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AllExceptionsFilter } from './filters/all-exception.filter';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
 
 /**
  * @description: 初始化响应模块
@@ -13,7 +12,6 @@ import { ResponseInterceptor } from './interceptors/response.interceptor';
 export function initResponseModule(app: NestExpressApplication) {
   app.useGlobalFilters(new AllExceptionsFilter()); // 全局异常过滤器
   app.useGlobalFilters(new HttpExceptionFilter()); // Http异常过滤器
-  app.useGlobalInterceptors(new ResponseInterceptor()); // 全局响应拦截
 }
 
 /**
