@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OssFile } from 'src/database/entities/oss-file.entity';
 import { Repository } from 'typeorm';
 import { OssService } from 'src/shared-modules/oss/oss.service';
-import { UploadCallbackDto } from './dto/upload-callback.dto';
 
 @Injectable()
 export class UploadService {
@@ -114,7 +113,7 @@ export class UploadService {
   /**
    * @description: 上传回调
    */
-  async callback(uploadCallbackDto: UploadCallbackDto) {
-    console.log('上传回调', uploadCallbackDto);
+  async callback(body: string) {
+    console.log('上传回调', body);
   }
 }

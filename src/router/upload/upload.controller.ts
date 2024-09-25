@@ -10,7 +10,6 @@ import { GetMultipartsVo } from './vo/get-multiparts.vo';
 import { GetMultipartDto } from './dto/get-multiparts.dto';
 import { MergeMultipartDto } from './dto/merge-multipart.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
-import { UploadCallbackDto } from './dto/upload-callback.dto';
 
 @ApiTags('上传')
 @Controller('upload')
@@ -92,7 +91,7 @@ export class UploadController {
   @ApiCommonResponse({})
   @ApiBearerAuth()
   @Public()
-  callback(@Body() uploadCallbackDto: UploadCallbackDto) {
-    return this.uploadService.callback(uploadCallbackDto);
+  callback(@Body() body: string) {
+    return this.uploadService.callback(body);
   }
 }
