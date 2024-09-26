@@ -8,6 +8,7 @@ import { Permission } from './entities/permission.entity';
 import { LoginRecord } from './entities/login-record.entity';
 import { OssFile } from './entities/oss-file.entity';
 import { StorageFile } from './entities/storage-file.entity';
+import { UserPermission } from './entities/user-permission.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,15 @@ import { StorageFile } from './entities/storage-file.entity';
           type: 'sqlite',
           database: configService.get('databasePath'),
           enableWAL: true, // sqlite数据库加速
-          entities: [User, Role, Permission, LoginRecord, OssFile, StorageFile], // 显式导入实体
+          entities: [
+            User,
+            Role,
+            Permission,
+            LoginRecord,
+            OssFile,
+            StorageFile,
+            UserPermission,
+          ], // 显式导入实体
           synchronize: true, // 根据实体自动更新数据库（生产环境会造成数据丢失）
           // autoLoadEntities: true, // 自动加载实体
         };

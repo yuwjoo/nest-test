@@ -100,6 +100,21 @@ export class StorageService {
       }
     }
 
+    // this.storageFileRepository.manager.transaction(async (manager) => {
+    //   await manager.save(StorageFile, {
+    //     path: filePath,
+    //     parent: createFileDto.parent,
+    //     level: filePath.split('/').length,
+    //     size: ossFile?.size || 0,
+    //     name: createFileDto.name,
+    //     isDirectory: createFileDto.isDirectory,
+    //     ossFile,
+    //   });
+    //   await manager.update(StorageFile, {
+    //     parent: createFileDto.parent
+    //   }
+    // });
+
     const storageFile = await this.storageFileRepository.save({
       path: filePath,
       parent: createFileDto.parent,
