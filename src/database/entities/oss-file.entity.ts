@@ -27,12 +27,6 @@ export class OssFile {
   })
   size: number;
 
-  // 名称
-  @Column({
-    name: 'name',
-  })
-  name: string;
-
   // object
   @Column({
     name: 'object',

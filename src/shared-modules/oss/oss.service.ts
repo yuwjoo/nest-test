@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as OSS from 'ali-oss';
 import { OSSExtend, SingUrlInfo } from './types/oss.interface';
 import { User } from 'src/database/entities/user.entity';
 import { MultipartDto } from 'src/router/upload/dto/multipart.dto';
+import { Request } from 'express';
+import { verifyUploadCallback } from './utils/verify-upload-callback';
 
 @Injectable()
 export class OssService {
@@ -167,5 +169,17 @@ export class OssService {
    */
   generateObject(user: User, hash: string, name: string): string {
     return `storage/${user.account}/${hash}-${name}`;
+  }
+
+  /**
+   * @description: 校验上传回调
+   * @param {Request} req express请求对象
+   */
+  async verifyCallback(req: Request) {
+    try {
+      await verifyUploadCallback(req, this.configService.get('oss.bucketName'));
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
   }
 }
