@@ -49,6 +49,7 @@ export class User {
 
   // 状态
   @Column({
+    type: 'enum',
     name: 'status',
     enum: UserStatus,
     default: UserStatus.enable,
@@ -56,7 +57,9 @@ export class User {
   status: UserStatus;
 
   // 角色
-  @ManyToOne(() => Role, (role) => role.name)
+  @ManyToOne(() => Role, (role) => role.name, {
+    cascade: true,
+  })
   @JoinColumn({
     name: 'role_name',
   })
@@ -78,7 +81,9 @@ export class User {
   permissions: Permission[];
 
   // 登录记录集合
-  @OneToMany(() => LoginRecord, (loginRecord) => loginRecord.user)
+  @OneToMany(() => LoginRecord, (loginRecord) => loginRecord.user, {
+    cascade: true,
+  })
   loginRecords: LoginRecord[];
 
   // 存储起点

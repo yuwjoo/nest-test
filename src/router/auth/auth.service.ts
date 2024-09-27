@@ -2,33 +2,18 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoginRecord } from 'src/database/entities/login-record.entity';
 import { User } from 'src/database/entities/user.entity';
-import {
-  DataSource,
-  EntityManager,
-  QueryFailedError,
-  Repository,
-  TypeORMError,
-} from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { AuthService as FunAuthService } from 'src/auth/auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { Permission } from 'src/database/entities/permission.entity';
-import { Role } from 'src/database/entities/role.entity';
 import { StorageFile } from 'src/database/entities/storage-file.entity';
 import { LoginVo } from './vo/login.vo';
-import { CONSTRAINT } from 'sqlite3';
-import { UserPermission } from 'src/database/entities/user-permission.entity';
-
-let num = 0;
+import { Permission } from 'src/database/entities/permission.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly authService: FunAuthService,
     private readonly entityManager: EntityManager,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>,
     @InjectRepository(LoginRecord)
     private readonly loginRecordRepository: Repository<LoginRecord>,
   ) {}
@@ -39,84 +24,43 @@ export class AuthService {
    */
   async register(registerDto: RegisterDto) {
     const userPath = '/' + registerDto.account;
-    const index = num++;
 
-    console.log(
-      'user',
-      index,
-      await this.entityManager.findOne(User, {
+    await this.entityManager.transaction(async (manager) => {
+      const userExists = await manager.exists(User, {
         where: { account: registerDto.account },
-      }),
-    );
+      });
+      if (userExists) {
+        throw new BadRequestException('该账号已被注册');
+      }
 
-    try {
-      console.time();
-      // await this.entityManager.transaction(async (manager) => {
-
-      const userInsertResult = await this.entityManager.insert(User, {
-        account: registerDto.account,
-        nickname: registerDto.nickname,
-        password: registerDto.password,
-        role: { name: 'user' },
-        storageOrigin: userPath,
-      }); // 创建用户
-
-      const permissionInsertResult = await this.entityManager.insert(
-        Permission,
-        {
+      try {
+        const permission = await manager.save(Permission, {
           path: userPath,
           level: 2,
           readable: true,
           writable: true,
-        },
-      ); // 创建用户权限
+        }); // 创建权限
 
-      // console.log('aaaa', index, permissionInsertResult.identifiers);
+        await manager.save(User, {
+          account: registerDto.account,
+          nickname: registerDto.nickname,
+          password: registerDto.password,
+          role: { name: 'user' },
+          permissions: [permission],
+          storageOrigin: userPath,
+        }); // 创建用户
 
-      await this.entityManager.insert(UserPermission, {
-        userAccount: userInsertResult.identifiers[0].account,
-        permissionId: permissionInsertResult.identifiers[0].id,
-      }); // 关联用户和权限
-
-      // await manager
-      //   .createQueryBuilder()
-      //   .relation(User, 'permissions')
-      //   .insert()
-      //   .into(User)
-      //   .values({
-      //     account: registerDto.account,
-      //     nickname: registerDto.nickname,
-      //     password: registerDto.password,
-      //     role: { name: 'user' },
-      //     permissions: [
-      //       {
-      //         path: userPath,
-      //         level: 2,
-      //         readable: true,
-      //         writable: true,
-      //       },
-      //     ],
-      //     storageOrigin: userPath,
-      //   })
-      //   .execute();
-
-      // await manager.save(StorageFile, {
-      //   path: userPath,
-      //   parent: '/',
-      //   level: 2,
-      //   name: registerDto.account,
-      //   isDirectory: true,
-      // });
-      // });
-    } catch (err) {
-      console.log('err', index, err);
-      if (err.errno === CONSTRAINT) {
-        throw new BadRequestException('该账号已被注册');
-      } else {
+        await manager.save(StorageFile, {
+          path: userPath,
+          parent: '/',
+          level: 2,
+          name: registerDto.account,
+          isDirectory: true,
+        }); // 创建存储目录
+      } catch {
         throw new BadRequestException('注册失败');
       }
-    }
-    console.timeEnd();
+    });
   }
 
   /**

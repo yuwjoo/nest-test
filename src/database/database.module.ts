@@ -15,11 +15,31 @@ import { UserPermission } from './entities/user-permission.entity';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
+      useFactory: () => {
+        // sqlite连接配置
+        // {
+        //   type: 'sqlite',
+        //   database: configService.get('databasePath'),
+        //   enableWAL: true, // sqlite数据库加速
+        //   entities: [
+        //     User,
+        //     Role,
+        //     Permission,
+        //     LoginRecord,
+        //     OssFile,
+        //     StorageFile,
+        //     UserPermission,
+        //   ], // 显式导入实体
+        //   synchronize: true, // 根据实体自动更新数据库（生产环境会造成数据丢失）
+        //   // autoLoadEntities: true, // 自动加载实体
+        // }
         return {
-          type: 'sqlite',
-          database: configService.get('databasePath'),
-          enableWAL: true, // sqlite数据库加速
+          type: 'mysql',
+          host: 'localhost',
+          port: 3306,
+          username: 'root',
+          password: '123456',
+          database: 'cloud_disk',
           entities: [
             User,
             Role,
