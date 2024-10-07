@@ -25,15 +25,23 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const userPath = '/' + registerDto.account;
 
-    await this.entityManager.transaction(async (manager) => {
-      const userExists = await manager.exists(User, {
-        where: { account: registerDto.account },
-      });
-      if (userExists) {
-        throw new BadRequestException('该账号已被注册');
-      }
+    const userExists = await this.entityManager.exists(User, {
+      where: { account: registerDto.account },
+    });
+    if (userExists) {
+      throw new BadRequestException('该账号已被注册');
+    }
 
-      try {
+    try {
+      await this.entityManager.transaction(async (manager) => {
+        await manager.save(StorageFile, {
+          path: userPath,
+          parent: '/',
+          level: 2,
+          name: registerDto.account,
+          isDirectory: true,
+        }); // 创建存储目录
+
         const permission = await manager.save(Permission, {
           path: userPath,
           level: 2,
@@ -49,18 +57,10 @@ export class AuthService {
           permissions: [permission],
           storageOrigin: userPath,
         }); // 创建用户
-
-        await manager.save(StorageFile, {
-          path: userPath,
-          parent: '/',
-          level: 2,
-          name: registerDto.account,
-          isDirectory: true,
-        }); // 创建存储目录
-      } catch {
-        throw new BadRequestException('注册失败');
-      }
-    });
+      });
+    } catch {
+      throw new BadRequestException('注册失败');
+    }
   }
 
   /**
@@ -71,12 +71,11 @@ export class AuthService {
   async login(user: User): Promise<LoginVo> {
     const token = this.authService.generateToken(user);
 
-    await this.entityManager.transaction(async (manager) => {
-      if (user.loginRecords.length > 5) {
-        manager.delete(LoginRecord, user.loginRecords[0].token);
-      }
-      manager.save(LoginRecord, { user, token });
-    });
+    if (user.loginRecords.length >= 5) {
+      this.entityManager.delete(LoginRecord, user.loginRecords[0].token);
+    }
+
+    this.entityManager.save(LoginRecord, { user, token });
 
     return new LoginVo(token, user);
   }

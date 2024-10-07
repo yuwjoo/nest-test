@@ -20,7 +20,7 @@ export function getStoragePermission(
   user: User,
   path: string,
 ): Pick<Permission, 'readable' | 'writable'> {
-  const match = (p: Permission) => (path + '/').startsWith(p.path + '/');
+  const match = (p: Permission) => (path + '/').startsWith(p.path);
   const defaultPermission: Pick<Permission, 'readable' | 'writable'> = {
     readable: false,
     writable: false,

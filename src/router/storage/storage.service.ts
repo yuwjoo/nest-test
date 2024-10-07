@@ -4,7 +4,7 @@ import { getStoragePermission } from 'src/utils/common';
 import { User } from 'src/database/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StorageFile } from 'src/database/entities/storage-file.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { FileListVo } from './vo/file-list.vo';
 import { CreateFileDto } from './dto/create-file.dto';
 import { OssFile } from 'src/database/entities/oss-file.entity';
@@ -24,6 +24,7 @@ import { DownloadFileDto } from './dto/download-file.dto';
 @Injectable()
 export class StorageService {
   constructor(
+    private readonly entityManager: EntityManager,
     @InjectRepository(StorageFile)
     private readonly storageFileRepository: Repository<StorageFile>,
     @InjectRepository(OssFile)
@@ -40,7 +41,7 @@ export class StorageService {
    * @return {Promise<FileListVo>} 列表
    */
   async list(user: User, fileListDto: FileListDto): Promise<FileListVo> {
-    const fileList = await this.storageFileRepository.find({
+    const fileList = await this.entityManager.find(StorageFile, {
       where: {
         parent: fileListDto.parent,
       },
@@ -83,7 +84,7 @@ export class StorageService {
     }
 
     if (!createFileDto.isDirectory && !createFileDto.ossFileId) {
-      throw new BadRequestException('创建文件需要关联oss文件');
+      throw new BadRequestException('创建文件需要关联oss文件id');
     }
 
     let ossFile: OssFile | undefined;
@@ -171,8 +172,7 @@ export class StorageService {
             .execute();
         },
       );
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       throw new BadRequestException('重命名失败');
     }
 
@@ -224,8 +224,7 @@ export class StorageService {
             .execute();
         },
       );
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       throw new BadRequestException('移动失败');
     }
 

@@ -5,53 +5,43 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { StorageFile } from './storage-file.entity';
+import { User } from './user.entity';
 
 @Entity('oss_file')
 export class OssFile {
-  // id
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   // hash
-  @Column({
-    name: 'hash',
-  })
+  @Column({ name: 'hash' })
   hash: string;
 
   // 大小
-  @Column({
-    name: 'size',
-    default: 0,
-  })
+  @Column({ name: 'size', default: 0 })
   size: number;
 
   // object
-  @Column({
-    name: 'object',
-  })
+  @Column({ name: 'object' })
   object: string;
 
   // 上传者
-  @Column({
-    name: 'uploader',
-  })
-  uploader: string;
+  @ManyToOne(() => User, (user) => user.account, { nullable: false })
+  @JoinColumn({ name: 'uploader' })
+  user: User;
 
   // 存储文件集合
   @OneToMany(() => StorageFile, (storageFile) => storageFile.ossFile)
   storageFiles: StorageFile[];
 
   // 创建时间
-  @CreateDateColumn({
-    name: 'create_date',
-  })
+  @CreateDateColumn({ name: 'create_date' })
   createDate: Date;
 
   // 更新时间
-  @UpdateDateColumn({
-    name: 'updated_date',
-  })
+  @UpdateDateColumn({ name: 'updated_date' })
   updatedDate: Date;
 }

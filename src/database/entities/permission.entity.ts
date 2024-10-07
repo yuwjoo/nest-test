@@ -1,32 +1,41 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { User } from './user.entity';
+import { Role } from './role.entity';
 
 @Entity('permission')
 export class Permission {
-  // 权限id
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // 用户
+  @ManyToOne(() => User, (user) => user.account)
+  @JoinColumn({ name: 'user_account' })
+  user: User;
+
+  // 角色
+  @ManyToOne(() => Role, (role) => role.name)
+  @JoinColumn({ name: 'role_name' })
+  role: Role;
+
   // 路径
-  @Column({
-    name: 'path',
-  })
+  @Column({ name: 'path' })
   path: string;
 
-  // 层级
-  @Column({
-    name: 'level',
-  })
-  level: number;
+  // 权重
+  @Column({ name: 'weight' })
+  weight: number;
 
   // 可读
-  @Column({
-    name: 'readable',
-  })
+  @Column({ name: 'readable' })
   readable: boolean;
 
   // 可写
-  @Column({
-    name: 'writable',
-  })
+  @Column({ name: 'writable' })
   writable: boolean;
 }

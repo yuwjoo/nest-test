@@ -7,8 +7,7 @@ import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginRecord } from './entities/login-record.entity';
 import { OssFile } from './entities/oss-file.entity';
-import { StorageFile } from './entities/storage-file.entity';
-import { UserPermission } from './entities/user-permission.entity';
+import { StorageFile, StorageFileType } from './entities/storage-file.entity';
 
 @Module({
   imports: [
@@ -40,15 +39,7 @@ import { UserPermission } from './entities/user-permission.entity';
           username: 'root',
           password: '123456',
           database: 'cloud_disk',
-          entities: [
-            User,
-            Role,
-            Permission,
-            LoginRecord,
-            OssFile,
-            StorageFile,
-            UserPermission,
-          ], // 显式导入实体
+          entities: [User, Role, Permission, LoginRecord, OssFile, StorageFile], // 显式导入实体
           synchronize: true, // 根据实体自动更新数据库（生产环境会造成数据丢失）
           // autoLoadEntities: true, // 自动加载实体
         };
@@ -72,64 +63,65 @@ export class DatabaseModule {
       {
         path: '/',
         parent: '',
-        level: 1,
-        name: '/',
-        isDirectory: true,
+        depth: 0,
+        name: '',
+        type: StorageFileType.directory,
       },
       {
         path: '/public',
         parent: '/',
-        level: 2,
+        depth: 1,
         name: 'public',
-        isDirectory: true,
+        type: StorageFileType.directory,
       },
       {
         path: '/admin',
         parent: '/',
-        level: 2,
+        depth: 1,
         name: 'admin',
-        isDirectory: true,
+        type: StorageFileType.directory,
       },
-    ]);
+    ]); // 初始化存储
+
     const permissions = await this.dataSource.manager.save(Permission, [
       {
         path: '/',
-        level: 1,
+        weight: 1,
         readable: true,
         writable: true,
       },
       {
         path: '/public',
-        level: 2,
+        weight: 2,
         readable: true,
         writable: true,
       },
       {
         path: '/admin',
-        level: 2,
+        weight: 2,
         readable: true,
         writable: true,
       },
-    ]);
-    const roles = await this.dataSource.manager.save(Role, [
+    ]); // 初始化权限
+
+    await this.dataSource.manager.save(Role, [
       {
         name: 'admin',
         describe: '管理员',
-        permissions: permissions.filter((p) => p.path === '/'),
       },
       {
         name: 'user',
         describe: '普通用户',
-        permissions: permissions.filter((p) => p.path === '/public'),
       },
-    ]);
+    ]); // 初始化角色
+
     await this.dataSource.manager.save(User, {
       account: 'admin',
       password: '123456',
       nickname: '管理员',
-      role: roles.find((role) => role.name === 'admin'),
+      role: { name: 'admin' },
       permissions: permissions.filter((p) => p.path === '/admin'),
       storageOrigin: '/',
-    });
+    }); // 初始化管理员
   }
 }

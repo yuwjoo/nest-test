@@ -4,8 +4,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryColumn,
-  ManyToMany,
-  JoinTable,
   OneToMany,
   ManyToOne,
   JoinColumn,
@@ -22,29 +20,19 @@ export enum UserStatus {
 @Entity('user')
 export class User {
   // 账号
-  @PrimaryColumn({
-    name: 'account',
-  })
+  @PrimaryColumn({ name: 'account' })
   account: string;
 
   // 密码
-  @Column({
-    name: 'password',
-  })
+  @Column({ name: 'password' })
   password: string;
 
   // 昵称
-  @Column({
-    name: 'nickname',
-  })
+  @Column({ name: 'nickname' })
   nickname: string;
 
   // 头像
-  @Column({
-    name: 'avatar',
-    nullable: true,
-    default: '',
-  })
+  @Column({ name: 'avatar', nullable: true, default: '' })
   avatar?: string;
 
   // 状态
@@ -57,50 +45,27 @@ export class User {
   status: UserStatus;
 
   // 角色
-  @ManyToOne(() => Role, (role) => role.name, {
-    cascade: true,
-  })
-  @JoinColumn({
-    name: 'role_name',
-  })
+  @ManyToOne(() => Role, (role) => role.name, { nullable: false })
+  @JoinColumn({ name: 'role_name' })
   role: Role;
 
   // 权限集合
-  @ManyToMany(() => Permission, (permission) => permission.id, {
-    cascade: true,
-  })
-  @JoinTable({
-    name: 'user_permission',
-    joinColumn: {
-      name: 'user_account',
-    },
-    inverseJoinColumn: {
-      name: 'permission_id',
-    },
-  })
+  @OneToMany(() => Permission, (permission) => permission.user)
   permissions: Permission[];
 
   // 登录记录集合
-  @OneToMany(() => LoginRecord, (loginRecord) => loginRecord.user, {
-    cascade: true,
-  })
+  @OneToMany(() => LoginRecord, (loginRecord) => loginRecord.user)
   loginRecords: LoginRecord[];
 
   // 存储起点
-  @Column({
-    name: 'storage_origin',
-  })
+  @Column({ name: 'storage_origin' })
   storageOrigin: string;
 
   // 创建时间
-  @CreateDateColumn({
-    name: 'create_date',
-  })
+  @CreateDateColumn({ name: 'create_date' })
   createDate: Date;
 
   // 更新时间
-  @UpdateDateColumn({
-    name: 'updated_date',
-  })
+  @UpdateDateColumn({ name: 'updated_date' })
   updatedDate: Date;
 }

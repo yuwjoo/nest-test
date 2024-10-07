@@ -9,66 +9,58 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { OssFile } from './oss-file.entity';
+import { User } from './user.entity';
+
+export enum StorageFileType {
+  file = 'file',
+  directory = 'directory',
+}
 
 @Entity('storage_file')
 export class StorageFile {
   // 路径
-  @PrimaryColumn({
-    name: 'path',
-  })
+  @PrimaryColumn({ name: 'path' })
   path: string;
 
   // 父级
-  @Column({
-    name: 'parent',
-  })
+  @Column({ name: 'parent' })
   parent: string;
 
-  // 层级
-  @Column({
-    name: 'level',
-  })
-  level: number;
-
   // 名称
-  @Column({
-    name: 'name',
-  })
+  @Column({ name: 'name' })
   name: string;
 
-  // 是否目录
-  @Column({
-    name: 'is_directory',
-  })
-  isDirectory: boolean;
+  // 深度
+  @Column({ name: 'depth' })
+  depth: number;
+
+  // 类型
+  @Column({ name: 'type', type: 'enum', enum: StorageFileType })
+  type: StorageFileType;
 
   // 大小
-  @Column({
-    name: 'size',
-    default: 0,
-  })
+  @Column({ name: 'size', default: '' })
   size: number;
 
-  // 关联的oss文件
-  @ManyToOne(() => OssFile)
+  // oss文件
+  @ManyToOne(() => OssFile, (ossFile) => ossFile.id)
   @JoinColumn({ name: 'oss_file_id' })
   ossFile?: OssFile;
 
+  // 创建者
+  @ManyToOne(() => User, (user) => user.account, { nullable: false })
+  @JoinColumn({ name: 'creator' })
+  user: User;
+
   // 创建时间
-  @CreateDateColumn({
-    name: 'create_date',
-  })
+  @CreateDateColumn({ name: 'create_date' })
   createdDate: Date;
 
   // 更新时间
-  @UpdateDateColumn({
-    name: 'updated_date',
-  })
+  @UpdateDateColumn({ name: 'updated_date' })
   updatedDate: Date;
 
   // 删除时间
-  @DeleteDateColumn({
-    name: 'deleted_date',
-  })
+  @DeleteDateColumn({ name: 'deleted_date' })
   deletedDate: Date;
 }
