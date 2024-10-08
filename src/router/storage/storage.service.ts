@@ -1,9 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { FileListDto } from './dto/file-list-dto';
-import { getStoragePermission } from 'src/utils/common';
+import {
+  getFileDepth,
+  getStoragePermission,
+  joinFilePath,
+} from 'src/utils/common';
 import { User } from 'src/database/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StorageFile } from 'src/database/entities/storage-file.entity';
+import {
+  StorageFile,
+  StorageFileType,
+} from 'src/database/entities/storage-file.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { FileListVo } from './vo/file-list.vo';
 import { CreateFileDto } from './dto/create-file.dto';
@@ -43,7 +50,7 @@ export class StorageService {
   async list(user: User, fileListDto: FileListDto): Promise<FileListVo> {
     const fileList = await this.entityManager.find(StorageFile, {
       where: {
-        parent: fileListDto.parent,
+        parent: joinFilePath([fileListDto.parent]) || '/',
       },
     });
 
@@ -60,8 +67,11 @@ export class StorageService {
     user: User,
     createFileDto: CreateFileDto,
   ): Promise<CreateFileVo> {
-    const filePath = createFileDto.parent + '/' + createFileDto.name;
-    const storagePermission = getStoragePermission(user, createFileDto.parent);
+    const filePath = joinFilePath([createFileDto.parent, createFileDto.name]);
+    const fileType = createFileDto.isDirectory
+      ? StorageFileType.directory
+      : StorageFileType.file;
+    const storagePermission = getStoragePermission(user, filePath);
 
     if (!storagePermission.writable) {
       throw new BadRequestException('无权限访问');
@@ -69,7 +79,7 @@ export class StorageService {
 
     if (
       !(await this.storageFileRepository.exists({
-        where: { path: createFileDto.parent },
+        where: { path: joinFilePath([createFileDto.parent]) },
       }))
     ) {
       throw new BadRequestException('父级目录不存在');
@@ -101,30 +111,18 @@ export class StorageService {
       }
     }
 
-    // this.storageFileRepository.manager.transaction(async (manager) => {
-    //   await manager.save(StorageFile, {
-    //     path: filePath,
-    //     parent: createFileDto.parent,
-    //     level: filePath.split('/').length,
-    //     size: ossFile?.size || 0,
-    //     name: createFileDto.name,
-    //     isDirectory: createFileDto.isDirectory,
-    //     ossFile,
-    //   });
-    //   await manager.update(StorageFile, {
-    //     parent: createFileDto.parent
-    //   }
-    // });
-
-    const storageFile = await this.storageFileRepository.save({
-      path: filePath,
-      parent: createFileDto.parent,
-      level: filePath.split('/').length,
-      size: ossFile?.size || 0,
-      name: createFileDto.name,
-      isDirectory: createFileDto.isDirectory,
-      ossFile,
-    });
+    const storageFile = await this.storageFileRepository.save(
+      new StorageFile({
+        path: filePath,
+        parent: joinFilePath([createFileDto.parent]),
+        depth: getFileDepth(filePath),
+        size: ossFile?.size || 0,
+        name: createFileDto.name,
+        type: fileType,
+        ossFile,
+        creator: new User({ account: user.account }),
+      }),
+    );
 
     return new CreateFileVo(storageFile, storagePermission);
   }
@@ -139,11 +137,18 @@ export class StorageService {
     user: User,
     renameFileDto: RenameFileDto,
   ): Promise<RenameFileVo> {
-    const oldFilePath = renameFileDto.parent + '/' + renameFileDto.oldName;
-    const newFilePath = renameFileDto.parent + '/' + renameFileDto.newName;
-    const storagePermission = getStoragePermission(user, renameFileDto.parent);
+    const oldFilePath = joinFilePath([
+      renameFileDto.parent,
+      renameFileDto.oldName,
+    ]);
+    const newFilePath = joinFilePath([
+      renameFileDto.parent,
+      renameFileDto.newName,
+    ]);
+    const oldPermission = getStoragePermission(user, oldFilePath);
+    const newPermission = getStoragePermission(user, newFilePath);
 
-    if (!storagePermission.writable) {
+    if (!oldPermission.writable || !newPermission.writable) {
       throw new BadRequestException('无权限访问');
     }
 
@@ -180,7 +185,7 @@ export class StorageService {
       where: { path: newFilePath },
     });
 
-    return new RenameFileVo(storageFile, storagePermission);
+    return new RenameFileVo(storageFile, newPermission);
   }
 
   /**
@@ -190,10 +195,10 @@ export class StorageService {
    * @return {Promise<MoveFileVo>} 文件信息
    */
   async move(user: User, moveFileDto: MoveFileDto): Promise<MoveFileVo> {
-    const oldFilePath = moveFileDto.oldParent + '/' + moveFileDto.name;
-    const newFilePath = moveFileDto.newParent + '/' + moveFileDto.name;
-    const oldPermission = getStoragePermission(user, moveFileDto.oldParent);
-    const newPermission = getStoragePermission(user, moveFileDto.newParent);
+    const oldFilePath = joinFilePath([moveFileDto.oldParent, moveFileDto.name]);
+    const newFilePath = joinFilePath([moveFileDto.newParent, moveFileDto.name]);
+    const oldPermission = getStoragePermission(user, oldFilePath);
+    const newPermission = getStoragePermission(user, newFilePath);
 
     if (!oldPermission.writable || !newPermission.writable) {
       throw new BadRequestException('无权限访问');
@@ -205,7 +210,10 @@ export class StorageService {
           await transactionalEntityManager
             .createQueryBuilder()
             .update(StorageFile)
-            .set({ path: newFilePath, parent: moveFileDto.newParent })
+            .set({
+              path: newFilePath,
+              parent: joinFilePath([moveFileDto.newParent]),
+            })
             .where('path = :path', { path: oldFilePath })
             .execute();
 
@@ -241,8 +249,7 @@ export class StorageService {
    * @param {DeleteFileDto} deleteFileDto 参数
    */
   async delete(user: User, deleteFileDto: DeleteFileDto) {
-    const parent = deleteFileDto.path.split('/').slice(0, -1).join('/');
-    const storagePermission = getStoragePermission(user, parent);
+    const storagePermission = getStoragePermission(user, deleteFileDto.path);
 
     if (!storagePermission.writable) {
       throw new BadRequestException('无权限访问');

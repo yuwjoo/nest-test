@@ -39,18 +39,18 @@ export class StorageFile {
   type: StorageFileType;
 
   // 大小
-  @Column({ name: 'size', default: '' })
+  @Column({ name: 'size', nullable: true })
   size: number;
 
   // oss文件
   @ManyToOne(() => OssFile, (ossFile) => ossFile.id)
   @JoinColumn({ name: 'oss_file_id' })
-  ossFile?: OssFile;
+  ossFile: OssFile;
 
   // 创建者
-  @ManyToOne(() => User, (user) => user.account, { nullable: false })
-  @JoinColumn({ name: 'creator' })
-  user: User;
+  @ManyToOne(() => User, (user) => user.account)
+  @JoinColumn({ name: 'creator_account' })
+  creator: User;
 
   // 创建时间
   @CreateDateColumn({ name: 'create_date' })
@@ -63,4 +63,8 @@ export class StorageFile {
   // 删除时间
   @DeleteDateColumn({ name: 'deleted_date' })
   deletedDate: Date;
+
+  constructor(data: Partial<StorageFile>) {
+    Object.assign(this, data);
+  }
 }

@@ -27,9 +27,9 @@ export class Permission {
   @Column({ name: 'path' })
   path: string;
 
-  // 权重
-  @Column({ name: 'weight' })
-  weight: number;
+  // 优先级
+  @Column({ name: 'priority' })
+  priority: number;
 
   // 可读
   @Column({ name: 'readable' })
@@ -38,4 +38,8 @@ export class Permission {
   // 可写
   @Column({ name: 'writable' })
   writable: boolean;
+
+  constructor(data: Partial<Permission>) {
+    Object.assign(this, data);
+  }
 }

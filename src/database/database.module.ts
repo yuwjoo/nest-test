@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DataSource } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginRecord } from './entities/login-record.entity';
 import { OssFile } from './entities/oss-file.entity';
 import { StorageFile, StorageFileType } from './entities/storage-file.entity';
+import { DataSource, EntityManager } from 'typeorm';
 
 @Module({
   imports: [
@@ -51,7 +51,7 @@ import { StorageFile, StorageFileType } from './entities/storage-file.entity';
   ],
 })
 export class DatabaseModule {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(private readonly entityManager: EntityManager) {
     // this.init();
   }
 
@@ -59,7 +59,50 @@ export class DatabaseModule {
    * @description: 初始化数据库
    */
   async init() {
-    await this.dataSource.manager.save(StorageFile, [
+    await this.entityManager.save(Role, [
+      {
+        name: 'admin',
+        describe: '管理员',
+      },
+      {
+        name: 'user',
+        describe: '普通用户',
+      },
+    ]); // 初始化角色
+
+    const permissions = await this.entityManager.save(Permission, [
+      {
+        role: { name: 'user' },
+        path: '/public/',
+        priority: 100025,
+        readable: true,
+        writable: true,
+      },
+      {
+        role: { name: 'admin' },
+        path: '/',
+        priority: 100010,
+        readable: true,
+        writable: true,
+      },
+      {
+        path: '/admin/',
+        priority: 200025,
+        readable: true,
+        writable: true,
+      },
+    ]); // 初始化权限
+
+    await this.entityManager.save(User, {
+      account: 'admin',
+      password: '123456',
+      nickname: '管理员',
+      role: { name: 'admin' },
+      permissions: [permissions.find((p) => p.path === '/admin/')],
+      storageOrigin: '/',
+    }); // 初始化管理员
+
+    await this.entityManager.save(StorageFile, [
       {
         path: '/',
         parent: '',
@@ -82,46 +125,5 @@ export class DatabaseModule {
         type: StorageFileType.directory,
       },
     ]); // 初始化存储
-
-    const permissions = await this.dataSource.manager.save(Permission, [
-      {
-        path: '/',
-        weight: 1,
-        readable: true,
-        writable: true,
-      },
-      {
-        path: '/public',
-        weight: 2,
-        readable: true,
-        writable: true,
-      },
-      {
-        path: '/admin',
-        weight: 2,
-        readable: true,
-        writable: true,
-      },
-    ]); // 初始化权限
-
-    await this.dataSource.manager.save(Role, [
-      {
-        name: 'admin',
-        describe: '管理员',
-      },
-      {
-        name: 'user',
-        describe: '普通用户',
-      },
-    ]); // 初始化角色
-
-    await this.dataSource.manager.save(User, {
-      account: 'admin',
-      password: '123456',
-      nickname: '管理员',
-      role: { name: 'admin' },
-      permissions: permissions.filter((p) => p.path === '/admin'),
-      storageOrigin: '/',
-    }); // 初始化管理员
   }
 }

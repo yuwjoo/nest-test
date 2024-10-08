@@ -21,4 +21,8 @@ export class LoginRecord {
   // 创建时间
   @CreateDateColumn({ name: 'create_date' })
   createDate: Date;
+
+  constructor(data: Partial<LoginRecord>) {
+    Object.assign(this, data);
+  }
 }

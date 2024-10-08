@@ -68,4 +68,8 @@ export class User {
   // 更新时间
   @UpdateDateColumn({ name: 'updated_date' })
   updatedDate: Date;
+
+  constructor(data: Partial<User>) {
+    Object.assign(this, data);
+  }
 }

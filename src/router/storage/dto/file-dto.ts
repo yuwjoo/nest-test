@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { StorageFileType } from 'src/database/entities/storage-file.entity';
 
 export class FileDto {
   @ApiProperty({ description: '路径' })
@@ -7,8 +8,8 @@ export class FileDto {
   @ApiProperty({ description: '父级' })
   parent: string;
 
-  @ApiProperty({ description: '层级' })
-  level: number;
+  @ApiProperty({ description: '深度' })
+  depth: number;
 
   @ApiProperty({ description: '大小' })
   size: number;
@@ -16,8 +17,8 @@ export class FileDto {
   @ApiProperty({ description: '名称' })
   name: string;
 
-  @ApiProperty({ description: '是否文件夹' })
-  isDirectory: boolean;
+  @ApiProperty({ description: '类型' })
+  type: StorageFileType;
 
   @ApiProperty({ description: '创建时间戳' })
   createdTime: number;

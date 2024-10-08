@@ -30,8 +30,8 @@ export class OssFile {
 
   // 上传者
   @ManyToOne(() => User, (user) => user.account, { nullable: false })
-  @JoinColumn({ name: 'uploader' })
-  user: User;
+  @JoinColumn({ name: 'uploader_account' })
+  uploader: User;
 
   // 存储文件集合
   @OneToMany(() => StorageFile, (storageFile) => storageFile.ossFile)
@@ -44,4 +44,8 @@ export class OssFile {
   // 更新时间
   @UpdateDateColumn({ name: 'updated_date' })
   updatedDate: Date;
+
+  constructor(data: Partial<OssFile>) {
+    Object.assign(this, data);
+  }
 }

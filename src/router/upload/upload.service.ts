@@ -122,7 +122,7 @@ export class UploadService {
       hash: body.hash,
       size: body.size,
       object: body.object,
-      uploader: body.account,
+      uploader: { account: body.account },
     });
 
     return ossFile.id;

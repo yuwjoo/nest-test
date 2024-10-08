@@ -14,4 +14,8 @@ export class Role {
   // 权限集合
   @OneToMany(() => Permission, (permission) => permission.role)
   permissions: Permission[];
+
+  constructor(data: Partial<Role>) {
+    Object.assign(this, data);
+  }
 }

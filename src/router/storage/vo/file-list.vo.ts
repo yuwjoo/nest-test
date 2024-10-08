@@ -21,10 +21,10 @@ export class FileListVo extends PageDataDto {
         list.push({
           path: file.path,
           parent: file.parent,
-          level: file.level,
+          depth: file.depth,
           size: file.size,
           name: file.name,
-          isDirectory: file.isDirectory,
+          type: file.type,
           createdTime: file.createdDate.getTime(),
           updatedTime: file.updatedDate.getTime(),
           readable: permission.readable,

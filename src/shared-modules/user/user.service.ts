@@ -19,13 +19,13 @@ export class UserService {
     return this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.role', 'role')
+      .leftJoinAndSelect('role.permissions', 'rolePermission')
       .leftJoinAndSelect('user.permissions', 'userPermission')
       .leftJoinAndSelect('user.loginRecords', 'userLoginRecord')
-      .leftJoinAndSelect('role.permissions', 'rolePermission')
       .where('user.account = :account', { account })
       .orderBy({
-        'userPermission.level': 'DESC',
-        'rolePermission.level': 'DESC',
+        'userPermission.priority': 'DESC',
+        'rolePermission.priority': 'DESC',
       })
       .getOne();
   }

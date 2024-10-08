@@ -10,10 +10,10 @@ export class RenameFileVo extends FileDto {
     super();
     this.path = storageFile.path;
     this.parent = storageFile.parent;
-    this.level = storageFile.level;
+    this.depth = storageFile.depth;
     this.size = storageFile.size;
     this.name = storageFile.name;
-    this.isDirectory = storageFile.isDirectory;
+    this.type = storageFile.type;
     this.createdTime = storageFile.createdDate.getTime();
     this.updatedTime = storageFile.updatedDate.getTime();
     this.readable = permission.readable;

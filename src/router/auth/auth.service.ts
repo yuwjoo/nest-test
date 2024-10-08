@@ -5,9 +5,14 @@ import { User } from 'src/database/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { AuthService as FunAuthService } from 'src/auth/auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { StorageFile } from 'src/database/entities/storage-file.entity';
+import {
+  StorageFile,
+  StorageFileType,
+} from 'src/database/entities/storage-file.entity';
 import { LoginVo } from './vo/login.vo';
 import { Permission } from 'src/database/entities/permission.entity';
+import { Role } from 'src/database/entities/role.entity';
+import { joinFilePath } from 'src/utils/common';
 
 @Injectable()
 export class AuthService {
@@ -23,40 +28,49 @@ export class AuthService {
    * @param {RegisterDto} registerDto 注册信息
    */
   async register(registerDto: RegisterDto) {
-    const userPath = '/' + registerDto.account;
-
     const userExists = await this.entityManager.exists(User, {
       where: { account: registerDto.account },
     });
+
     if (userExists) {
       throw new BadRequestException('该账号已被注册');
     }
 
     try {
       await this.entityManager.transaction(async (manager) => {
-        await manager.save(StorageFile, {
-          path: userPath,
-          parent: '/',
-          level: 2,
-          name: registerDto.account,
-          isDirectory: true,
-        }); // 创建存储目录
+        const permission = await manager.save(
+          Permission,
+          new Permission({
+            path: joinFilePath([registerDto.account], true),
+            priority: 200025,
+            readable: true,
+            writable: true,
+          }),
+        ); // 创建权限
 
-        const permission = await manager.save(Permission, {
-          path: userPath,
-          level: 2,
-          readable: true,
-          writable: true,
-        }); // 创建权限
+        await manager.save(
+          User,
+          new User({
+            account: registerDto.account,
+            nickname: registerDto.nickname,
+            password: registerDto.password,
+            role: new Role({ name: 'user' }),
+            permissions: [permission],
+            storageOrigin: joinFilePath([registerDto.account], true),
+          }),
+        ); // 创建用户
 
-        await manager.save(User, {
-          account: registerDto.account,
-          nickname: registerDto.nickname,
-          password: registerDto.password,
-          role: { name: 'user' },
-          permissions: [permission],
-          storageOrigin: userPath,
-        }); // 创建用户
+        await manager.save(
+          StorageFile,
+          new StorageFile({
+            path: joinFilePath([registerDto.account]),
+            parent: '/',
+            name: registerDto.account,
+            depth: 1,
+            type: StorageFileType.directory,
+            creator: new User({ account: registerDto.account }),
+          }),
+        ); // 创建存储目录
       });
     } catch {
       throw new BadRequestException('注册失败');
