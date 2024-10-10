@@ -1,4 +1,4 @@
-export interface Configuration {
+export interface DefaultConfig {
   platform: 'win' | 'linux'; // 运行平台
   protocol: string; // 协议
   host: string; // 服务器host
@@ -16,6 +16,7 @@ export interface Configuration {
     password: string; // 默认密码
   };
   oss: {
+    region: string; // 地区
     bucketName: string; // bucket名称
     adminAccount: string; // admin账号
     adminAccessKeyID: string; // admin AccessKeyID
@@ -25,5 +26,8 @@ export interface Configuration {
     stsAccessKeySecret: string; // sts AccessKeySecret
     stsRAMRole: string; // sts角色
     uploadPublicKeyBase64: string; // 上传回调签名公钥base64字符串
+    uploadSignExpire: number; // 上传签名过期时间（单位：秒）
+    downloadSignExpire: number; // 下载签名过期时间（单位：秒）
+    uploadCallbackUrl: string; // 上传回调地址
   };
 }
