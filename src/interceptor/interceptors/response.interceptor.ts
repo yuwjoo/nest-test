@@ -15,7 +15,7 @@ import {
 import { IS_RAW_KEY } from 'src/common/constants';
 
 /**
- * @description: 响应拦截器
+ * @description: 全局响应拦截器
  */
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {

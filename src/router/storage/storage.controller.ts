@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/database/entities/user.entity';
 import { FileListDto } from './dto/file-list-dto';
-import { ApiCommonResponse } from 'src/swagger/decorators/api-common-response.decorator';
+import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';
 import { FileListVo } from './vo/file-list.vo';
 import { CreateFileDto } from './dto/create-file.dto';
 import { RenameFileDto } from './dto/rename-file.dto';

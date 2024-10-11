@@ -4,10 +4,10 @@ import { PageDataDto } from 'src/dto/page-data.dto';
 import { ResponseDto } from 'src/dto/response.dto';
 
 /**
- * @description: 初始化swagger模块
+ * @description: 初始化swagger
  * @param {NestExpressApplication} app 应用实例
  */
-export function initSwaggerModule(app: NestExpressApplication) {
+export function initSwagger(app: NestExpressApplication) {
   const config = new DocumentBuilder()
     .setTitle('API 文档')
     .setDescription('这是一个nestJS的API文档')

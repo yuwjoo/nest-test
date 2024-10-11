@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiCommonResponse } from 'src/swagger/decorators/api-common-response.decorator';
+import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';
 import { PreCheckFileVo } from './vo/pre-check-file.vo';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/database/entities/user.entity';

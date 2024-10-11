@@ -3,7 +3,7 @@ import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { User } from 'src/database/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiCommonResponse } from 'src/swagger/decorators/api-common-response.decorator';
+import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { RegisterDto } from './dto/register.dto';
