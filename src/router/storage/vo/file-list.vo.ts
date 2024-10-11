@@ -1,8 +1,8 @@
-import { PageDataDto } from 'src/response/dto/page-data.dto';
 import { FileDto } from '../dto/file-dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { StorageFile } from 'src/database/entities/storage-file.entity';
 import { User } from 'src/database/entities/user.entity';
+import { PageDataDto } from 'src/dto/page-data.dto';
 import { getStoragePermission } from 'src/utils/common';
 
 export class FileListVo extends PageDataDto {

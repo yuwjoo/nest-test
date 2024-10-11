@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import {
   ExceptionFilter,
   Catch,
@@ -5,8 +6,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { createResponse } from '../response';
+import { createCommonResponse } from 'src/common/response';
 
 /**
  * @description: Http异常过滤器
@@ -16,7 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const data = createResponse(
+    const data = createCommonResponse(
       undefined,
       (exception.getResponse() as any)?.message || exception.message,
       exception.getStatus(),

@@ -1,7 +1,7 @@
 import { applyDecorators, Type } from '@nestjs/common';
 import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
-import { PageDataDto } from 'src/response/dto/page-data.dto';
-import { ResponseDto } from 'src/response/dto/response.dto';
+import { PageDataDto } from 'src/dto/page-data.dto';
+import { ResponseDto } from 'src/dto/response.dto';
 
 export interface Options {
   type: Type<any>;

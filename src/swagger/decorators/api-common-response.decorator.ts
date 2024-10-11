@@ -1,7 +1,7 @@
 import { applyDecorators, Type } from '@nestjs/common';
 import { getSchemaPath, ApiExtraModels, ApiResponse } from '@nestjs/swagger';
-import { ResponseDto } from 'src/response/dto/response.dto';
-import { RESPONSE_CODE } from 'src/response/types/response.enum';
+import { RESPONSE_CODE } from 'src/common/response';
+import { ResponseDto } from 'src/dto/response.dto';
 
 export interface Options {
   type?: Type<any>;

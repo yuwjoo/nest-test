@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CommonResponse } from '../types/response.interface';
+import { CommonResponse } from 'src/interfaces/response.interface';
 
 /**
  * @description: 基本响应体

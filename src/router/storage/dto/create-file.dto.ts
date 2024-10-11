@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
-import { IsFilename } from 'src/common/is-filename.decorator';
+import { IsFilename } from 'src/decorators/is-filename.decorator';
 
 export class CreateFileDto {
   @ApiProperty({ description: '父级路径', example: '/yuwjoo' })

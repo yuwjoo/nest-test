@@ -1,7 +1,7 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { PageDataDto } from 'src/response/dto/page-data.dto';
-import { ResponseDto } from 'src/response/dto/response.dto';
+import { PageDataDto } from 'src/dto/page-data.dto';
+import { ResponseDto } from 'src/dto/response.dto';
 
 /**
  * @description: 初始化swagger模块

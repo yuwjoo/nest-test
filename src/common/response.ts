@@ -1,4 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
+import * as dayjs from 'dayjs';
+import { CommonResponse } from 'src/interfaces/response.interface';
 
 /**
  * @description: 响应码
@@ -19,4 +21,19 @@ export enum RESPONSE_MSG {
   SUCCESS = '请求成功',
   FAILURE = '请求失败',
   SERVER_ERROR = '服务器内部错误!',
+}
+
+/**
+ * @description: 创建基本响应数据
+ * @param {T} data 响应数据
+ * @param {string} msg 响应信息
+ * @param {number} code 状态码
+ * @return {CommonResponse<T>} 响应数据
+ */
+export function createCommonResponse<T = unknown>(
+  data: T,
+  msg: string = RESPONSE_MSG.SUCCESS,
+  code: number = RESPONSE_CODE.OK,
+): CommonResponse<T> {
+  return { data, msg, code, timestamp: dayjs().valueOf() };
 }

@@ -6,13 +6,16 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RESPONSE_CODE, RESPONSE_MSG } from '../types/response.enum';
-import { createResponse } from '../response';
 import { Reflector } from '@nestjs/core';
-import { IS_RAW_KEY } from '../decorators/raw.decorator';
+import {
+  createCommonResponse,
+  RESPONSE_CODE,
+  RESPONSE_MSG,
+} from 'src/common/response';
+import { IS_RAW_KEY } from 'src/common/constants';
 
 /**
- * @description: 全局响应拦截器
+ * @description: 响应拦截器
  */
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
@@ -27,7 +30,7 @@ export class ResponseInterceptor implements NestInterceptor {
       if (isRaw) {
         return data;
       }
-      return createResponse(data, RESPONSE_MSG.SUCCESS, RESPONSE_CODE.OK);
+      return createCommonResponse(data, RESPONSE_MSG.SUCCESS, RESPONSE_CODE.OK);
     };
 
     return next.handle().pipe(map(handleMap));

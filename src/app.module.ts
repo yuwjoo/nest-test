@@ -4,7 +4,6 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigurationModule } from './configuration/configuration.module';
 import { RouterModule } from './router/router.module';
 import { OssModule } from './shared-modules/oss/oss.module';
-import { ResponseModule } from './response/response.module';
 import { InterceptorModule } from './interceptor/interceptor.module';
 
 @Module({
@@ -14,7 +13,6 @@ import { InterceptorModule } from './interceptor/interceptor.module';
     AuthModule,
     RouterModule,
     OssModule,
-    ResponseModule,
     InterceptorModule,
   ],
 })

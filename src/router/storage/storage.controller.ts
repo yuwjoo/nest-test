@@ -14,10 +14,10 @@ import { DeleteFileDto } from './dto/delete-file.dto';
 import { MoveFileVo } from './vo/move-file.vo';
 import { MoveFileDto } from './dto/move-file.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
-import { Raw } from 'src/response/decorators/raw.decorator';
 import { GetFileCoverDto } from './dto/get-file-cover.dto';
 import { BatchDeleteFileDto } from './dto/batch-delete-file.dto';
 import { DownloadFileDto } from './dto/download-file.dto';
+import { Raw } from 'src/decorators/raw.decorator';
 
 @ApiTags('存储')
 @Controller('storage')

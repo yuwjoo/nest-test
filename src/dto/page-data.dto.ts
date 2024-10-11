@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PageData } from '../types/response.interface';
+import { PageData } from 'src/interfaces/response.interface';
 
 /**
  * @description: 分页数据

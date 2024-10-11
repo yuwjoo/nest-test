@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Length } from 'class-validator';
-import { IsFilename } from 'src/common/is-filename.decorator';
+import { IsFilename } from 'src/decorators/is-filename.decorator';
 
 export class RegisterDto {
   @ApiProperty({ description: '账号', example: 'yuwjoo' })
