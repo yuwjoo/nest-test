@@ -15,16 +15,16 @@ import { ConfigurationService } from 'src/configuration/configuration.service';
   imports: [
     TypeOrmModule.forRootAsync({
       inject: [ConfigurationService],
-      useFactory: (configService: ConfigurationService) => {
+      useFactory: ({ config }: ConfigurationService) => {
         return {
           type: 'mysql',
-          host: configService.config.database.mysql.host,
-          port: configService.config.database.mysql.port,
-          username: configService.config.database.mysql.username,
-          password: configService.config.database.mysql.password,
-          database: configService.config.database.mysql.database,
+          host: config.database.mysql.host,
+          port: config.database.mysql.port,
+          username: config.database.mysql.username,
+          password: config.database.mysql.password,
+          database: config.database.mysql.database,
           entities: [User, Role, Permission, LoginRecord, OssFile, StorageFile], // 显式导入实体
-          synchronize: configService.config.env === 'development', // 根据实体自动更新数据库（会造成数据丢失, 生产环境禁用）
+          synchronize: config.env === 'development', // 根据实体自动更新数据库（会造成数据丢失, 生产环境禁用）
         };
       },
       dataSourceFactory: async (options) => {
