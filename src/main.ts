@@ -35,7 +35,7 @@ async function bootstrap() {
   ); // 全局校验管道
   initResponseModule(app); // 初始化响应模块
   initSwaggerModule(app); // 初始化swagger模块
-  await app.listen(config.port);
+  await app.listen(config.server.port);
 }
 
 bootstrap();
