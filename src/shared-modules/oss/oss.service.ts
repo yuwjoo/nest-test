@@ -1,12 +1,12 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import * as OSS from 'ali-oss';
 import { OSSExtend, SingUrlInfo } from './types/oss.interface';
-import { User } from 'src/database/entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { MultipartDto } from 'src/router/upload/dto/multipart.dto';
 import { Request } from 'express';
 import { verifyUploadCallback } from './utils/verify-upload-callback';
-import { DefaultConfig } from 'src/configuration/configuration.interface';
 import { DEFAULT_CONFIG } from 'src/common/constants';
+import { DefaultConfig } from 'src/interfaces/configuration.interface';
 
 @Injectable()
 export class OssService {

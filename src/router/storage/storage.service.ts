@@ -4,17 +4,14 @@ import {
   getFileDepth,
   getStoragePermission,
   joinFilePath,
-} from 'src/utils/common';
-import { User } from 'src/database/entities/user.entity';
+} from 'src/common/file';
+import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  StorageFile,
-  StorageFileType,
-} from 'src/database/entities/storage-file.entity';
+import { StorageFile, StorageFileType } from 'src/entities/storage-file.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { FileListVo } from './vo/file-list.vo';
 import { CreateFileDto } from './dto/create-file.dto';
-import { OssFile } from 'src/database/entities/oss-file.entity';
+import { OssFile } from 'src/entities/oss-file.entity';
 import { CreateFileVo } from './vo/create-file.vo';
 import { RenameFileDto } from './dto/rename-file.dto';
 import { RenameFileVo } from './vo/rename-file.vo';

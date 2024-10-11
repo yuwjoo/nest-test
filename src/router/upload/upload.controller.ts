@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';
 import { PreCheckFileVo } from './vo/pre-check-file.vo';
 import { GetUser } from 'src/decorators/get-user.decorator';
-import { User } from 'src/database/entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { PreCheckFileDto } from './dto/pre-check-file.dto';
 import { GetMultipartsVo } from './vo/get-multiparts.vo';
 import { GetMultipartDto } from './dto/get-multiparts.dto';

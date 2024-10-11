@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { testFilename } from 'src/utils/common';
+import { testFilename } from 'src/common/file';
 
 /**
  * @description: 是否合法文件名

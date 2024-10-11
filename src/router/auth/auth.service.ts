@@ -1,18 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginRecord } from 'src/database/entities/login-record.entity';
-import { User } from 'src/database/entities/user.entity';
+import { LoginRecord } from 'src/entities/login-record.entity';
+import { User } from 'src/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
-import {
-  StorageFile,
-  StorageFileType,
-} from 'src/database/entities/storage-file.entity';
+import { StorageFile, StorageFileType } from 'src/entities/storage-file.entity';
 import { LoginVo } from './vo/login.vo';
-import { Permission } from 'src/database/entities/permission.entity';
-import { Role } from 'src/database/entities/role.entity';
-import { joinFilePath } from 'src/utils/common';
-import { AuthenticationService } from 'src/authentication/authentication.service';
+import { Permission } from 'src/entities/permission.entity';
+import { Role } from 'src/entities/role.entity';
+import { joinFilePath } from 'src/common/file';
+import { AuthenticationService } from 'src/feature-modules/authentication/authentication.service';
 
 @Injectable()
 export class AuthService {

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserStatus } from 'src/database/entities/user.entity';
+import { UserStatus } from 'src/entities/user.entity';
 import { RoleDto } from './role.dto';
 
 export class UserDto {

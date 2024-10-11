@@ -14,7 +14,7 @@ module.exports = () => {
             to: './public',
           },
           {
-            from: `./src/configuration/configs/config.${process.env.NODE_ENV}.yaml`,
+            from: `./src/configs/config.${process.env.NODE_ENV}.yaml`,
             to: './config.yml',
           },
           {

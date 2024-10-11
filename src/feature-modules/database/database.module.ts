@@ -1,15 +1,15 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Role } from './entities/role.entity';
-import { Permission } from './entities/permission.entity';
-import { LoginRecord } from './entities/login-record.entity';
-import { OssFile } from './entities/oss-file.entity';
-import { StorageFile } from './entities/storage-file.entity';
 import { DataSource, EntityManager } from 'typeorm';
 import { DatabaseService } from './database.service';
-import { DefaultConfig } from 'src/configuration/configuration.interface';
 import { DEFAULT_CONFIG } from 'src/common/constants';
+import { Permission } from 'src/entities/permission.entity';
+import { LoginRecord } from 'src/entities/login-record.entity';
+import { OssFile } from 'src/entities/oss-file.entity';
+import { Role } from 'src/entities/role.entity';
+import { StorageFile } from 'src/entities/storage-file.entity';
+import { User } from 'src/entities/user.entity';
+import { DefaultConfig } from 'src/interfaces/configuration.interface';
 
 @Global()
 @Module({

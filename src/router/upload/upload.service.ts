@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { User } from 'src/database/entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { PreCheckFileDto } from './dto/pre-check-file.dto';
 import { GetMultipartDto } from './dto/get-multiparts.dto';
 import { MergeMultipartDto } from './dto/merge-multipart.dto';
 import { GetMultipartsVo } from './vo/get-multiparts.vo';
 import { MODE, PreCheckFileVo } from './vo/pre-check-file.vo';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OssFile } from 'src/database/entities/oss-file.entity';
+import { OssFile } from 'src/entities/oss-file.entity';
 import { Repository } from 'typeorm';
 import { OssService } from 'src/shared-modules/oss/oss.service';
 import { UploadCallbackDto } from './dto/upload-callback.dto';

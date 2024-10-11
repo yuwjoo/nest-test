@@ -1,9 +1,9 @@
 import { FileDto } from '../dto/file-dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { StorageFile } from 'src/database/entities/storage-file.entity';
-import { User } from 'src/database/entities/user.entity';
+import { StorageFile } from 'src/entities/storage-file.entity';
+import { User } from 'src/entities/user.entity';
 import { PageDataDto } from 'src/dto/page-data.dto';
-import { getStoragePermission } from 'src/utils/common';
+import { getStoragePermission } from 'src/common/file';
 
 export class FileListVo extends PageDataDto {
   @ApiProperty({ description: '文件列表', type: [FileDto] })

@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { join } from 'path';
-import { DefaultConfig } from './configuration.interface';
+import { DefaultConfig } from 'src/interfaces/configuration.interface';
 
 // 默认配置工厂
 export const defaultConfigFactory = registerAs<DefaultConfig>('default', () => {

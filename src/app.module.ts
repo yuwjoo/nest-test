@@ -1,19 +1,19 @@
 import { Module, NestModule } from '@nestjs/common';
-import { DatabaseModule } from './database/database.module';
-import { ConfigurationModule } from './configuration/configuration.module';
-import { RouterModule } from './router/router.module';
+import { AuthenticationModule } from './feature-modules/authentication/authentication.module';
+import { ConfigurationModule } from './feature-modules/configuration/configuration.module';
+import { DatabaseModule } from './feature-modules/database/database.module';
+import { InterceptorModule } from './feature-modules/interceptor/interceptor.module';
 import { OssModule } from './shared-modules/oss/oss.module';
-import { InterceptorModule } from './interceptor/interceptor.module';
-import { AuthenticationModule } from './authentication/authentication.module';
+import { RouterModule } from './router/router.module';
 
 @Module({
   imports: [
+    AuthenticationModule,
     ConfigurationModule,
     DatabaseModule,
-    RouterModule,
-    OssModule,
     InterceptorModule,
-    AuthenticationModule,
+    OssModule,
+    RouterModule,
   ],
 })
 export class AppModule implements NestModule {

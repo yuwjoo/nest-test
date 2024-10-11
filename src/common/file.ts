@@ -1,5 +1,5 @@
-import { Permission } from 'src/database/entities/permission.entity';
-import { User } from 'src/database/entities/user.entity';
+import { Permission } from 'src/entities/permission.entity';
+import { User } from 'src/entities/user.entity';
 
 /**
  * @description: 文件名合法性校验

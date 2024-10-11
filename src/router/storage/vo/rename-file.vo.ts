@@ -1,6 +1,6 @@
-import { Permission } from 'src/database/entities/permission.entity';
+import { Permission } from 'src/entities/permission.entity';
 import { FileDto } from '../dto/file-dto';
-import { StorageFile } from 'src/database/entities/storage-file.entity';
+import { StorageFile } from 'src/entities/storage-file.entity';
 
 export class RenameFileVo extends FileDto {
   constructor(

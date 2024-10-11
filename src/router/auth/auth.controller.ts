@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/guards/local-auth.guard';
-import { User } from 'src/database/entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StorageFileType } from 'src/database/entities/storage-file.entity';
+import { StorageFileType } from 'src/entities/storage-file.entity';
 
 export class FileDto {
   @ApiProperty({ description: '路径' })

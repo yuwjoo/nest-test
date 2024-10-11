@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserDto } from '../dto/user.dto';
-import { User } from 'src/database/entities/user.entity';
+import { User } from 'src/entities/user.entity';
 
 export class LoginVo {
   @ApiProperty({ description: 'token' })

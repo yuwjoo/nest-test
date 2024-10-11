@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Query, Redirect } from '@nestjs/common';
 import { StorageService } from './storage.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/decorators/get-user.decorator';
-import { User } from 'src/database/entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { FileListDto } from './dto/file-list-dto';
 import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';
 import { FileListVo } from './vo/file-list.vo';
