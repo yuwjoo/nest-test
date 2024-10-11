@@ -1,11 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import * as OSS from 'ali-oss';
 import { OSSExtend, SingUrlInfo } from './types/oss.interface';
 import { User } from 'src/database/entities/user.entity';
 import { MultipartDto } from 'src/router/upload/dto/multipart.dto';
 import { Request } from 'express';
 import { verifyUploadCallback } from './utils/verify-upload-callback';
-import { ConfigurationService } from 'src/configuration/configuration.service';
+import { DefaultConfig } from 'src/configuration/configuration.interface';
+import { DEFAULT_CONFIG } from 'src/common/constants';
 
 @Injectable()
 export class OssService {
@@ -13,9 +14,9 @@ export class OssService {
   private readonly uploadSignExpire: number; // 上传签名有效期
   private readonly uploadSignRule: Record<string, any>; // 上传签名规则
 
-  constructor(private readonly configService: ConfigurationService) {
+  constructor(@Inject(DEFAULT_CONFIG) private readonly config: DefaultConfig) {
     this.admin = this.initAdmin();
-    this.uploadSignExpire = this.configService.config.oss.uploadSignExpire;
+    this.uploadSignExpire = this.config.oss.uploadSignExpire;
     this.uploadSignRule = {
       'x-oss-forbid-overwrite': true, // 禁止覆盖
       'x-oss-object-acl': 'private', // 私有
@@ -29,10 +30,10 @@ export class OssService {
    */
   initAdmin(): OSSExtend {
     return new OSS({
-      region: this.configService.config.oss.region,
-      accessKeyId: this.configService.config.oss.admin.accessKeyID,
-      accessKeySecret: this.configService.config.oss.admin.accessKeySecret,
-      bucket: this.configService.config.oss.bucket,
+      region: this.config.oss.region,
+      accessKeyId: this.config.oss.admin.accessKeyID,
+      accessKeySecret: this.config.oss.admin.accessKeySecret,
+      bucket: this.config.oss.bucket,
     }) as OSSExtend;
   }
 
@@ -44,7 +45,7 @@ export class OssService {
    */
   async signDownloadUrl(object: string, name: string): Promise<string> {
     return this.admin.signatureUrl(object, {
-      expires: this.configService.config.oss.downloadSignExpire, // 签名url过期时间（秒）
+      expires: this.config.oss.downloadSignExpire, // 签名url过期时间（秒）
       response: {
         'content-disposition': `attachment; filename=${encodeURIComponent(name)}`, // 下载文件名
       },
@@ -168,7 +169,7 @@ export class OssService {
    * @return {string} object
    */
   generateObject(user: User, hash: string, name: string): string {
-    return `${this.configService.config.oss.storageRoot}/${user.account}/${hash}-${name}`;
+    return `${this.config.oss.storageRoot}/${user.account}/${hash}-${name}`;
   }
 
   /**
@@ -177,7 +178,7 @@ export class OssService {
    */
   async verifyCallback(req: Request) {
     try {
-      await verifyUploadCallback(req, this.configService.config.oss.bucket);
+      await verifyUploadCallback(req, this.config.oss.bucket);
     } catch (err) {
       throw new BadRequestException(err.message);
     }
@@ -188,7 +189,6 @@ export class OssService {
    * @return {string} 服务器接口地址
    */
   getCallbackServerUrl(): string {
-    const { server, oss } = this.configService.config;
-    return `${server.protocol}://${server.host}:${server.port}/${oss.uploadCallbackPath}`;
+    return `${this.config.server.protocol}://${this.config.server.host}:${this.config.server.port}/${this.config.oss.uploadCallbackPath}`;
   }
 }

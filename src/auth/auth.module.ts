@@ -7,18 +7,19 @@ import { JwtStrategy } from './strategys/jwt.strategy';
 import { UserModule } from 'src/shared-modules/user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ConfigurationService } from 'src/configuration/configuration.service';
+import { DEFAULT_CONFIG } from 'src/common/constants';
+import { DefaultConfig } from 'src/configuration/configuration.interface';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
     JwtModule.registerAsync({
-      inject: [ConfigurationService],
-      useFactory: async (configService: ConfigurationService) => ({
-        secret: configService.config.secretKeyBase64, // 加密密钥
+      inject: [DEFAULT_CONFIG],
+      useFactory: async (config: DefaultConfig) => ({
+        secret: config.secretKeyBase64, // 加密密钥
         signOptions: {
-          expiresIn: configService.config.tokenExpirationTime, // 过期时间
+          expiresIn: config.tokenExpirationTime, // 过期时间
         },
       }),
     }),

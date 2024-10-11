@@ -5,6 +5,7 @@ import { ConfigurationModule } from './configuration/configuration.module';
 import { RouterModule } from './router/router.module';
 import { OssModule } from './shared-modules/oss/oss.module';
 import { ResponseModule } from './response/response.module';
+import { InterceptorModule } from './interceptor/interceptor.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ResponseModule } from './response/response.module';
     RouterModule,
     OssModule,
     ResponseModule,
+    InterceptorModule,
   ],
 })
 export class AppModule implements NestModule {

@@ -1,21 +1,23 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/database/entities/user.entity';
 import { CustomJwtPayload } from '../types/jwt';
 import { AuthService } from '../auth.service';
-import { ConfigurationService } from 'src/configuration/configuration.service';
+import { DEFAULT_CONFIG } from 'src/common/constants';
+import { DefaultConfig } from 'src/configuration/configuration.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private authService: AuthService,
-    configService: ConfigurationService,
+    @Inject(DEFAULT_CONFIG)
+    readonly config: DefaultConfig,
+    private readonly authService: AuthService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // 从请求对象的何处获取token
       ignoreExpiration: false, // 拦截过期的token
-      secretOrKey: configService.config.secretKeyBase64, // 加密密钥
+      secretOrKey: config.secretKeyBase64, // 加密密钥
       passReqToCallback: true, // 请求对象加入到校验回调参数中
     });
   }

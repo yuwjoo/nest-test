@@ -8,14 +8,15 @@ import { OssFile } from './entities/oss-file.entity';
 import { StorageFile } from './entities/storage-file.entity';
 import { DataSource, EntityManager } from 'typeorm';
 import { DatabaseService } from './database.service';
-import { ConfigurationService } from 'src/configuration/configuration.service';
+import { DefaultConfig } from 'src/configuration/configuration.interface';
+import { DEFAULT_CONFIG } from 'src/common/constants';
 
 @Global()
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      inject: [ConfigurationService],
-      useFactory: ({ config }: ConfigurationService) => {
+      inject: [DEFAULT_CONFIG],
+      useFactory: (config: DefaultConfig) => {
         return {
           type: 'mysql',
           host: config.database.mysql.host,

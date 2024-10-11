@@ -1,11 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { defaultConfig } from './configuration.config';
-import { ConfigType } from '@nestjs/config';
+import { DEFAULT_CONFIG } from 'src/common/constants';
+import { DefaultConfig } from './configuration.interface';
 
 @Injectable()
 export class ConfigurationService {
-  constructor(
-    @Inject(defaultConfig.KEY)
-    readonly config: ConfigType<typeof defaultConfig>,
-  ) {}
+  constructor(@Inject(DEFAULT_CONFIG) private readonly config: DefaultConfig) {}
 }
