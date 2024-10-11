@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Role } from './entities/role.entity';
@@ -10,6 +10,7 @@ import { DataSource, EntityManager } from 'typeorm';
 import { DatabaseService } from './database.service';
 import { ConfigurationService } from 'src/configuration/configuration.service';
 
+@Global()
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -32,6 +33,7 @@ import { ConfigurationService } from 'src/configuration/configuration.service';
     }),
   ],
   providers: [DatabaseService],
+  exports: [DatabaseService],
 })
 export class DatabaseModule {
   constructor(private readonly entityManager: EntityManager) {

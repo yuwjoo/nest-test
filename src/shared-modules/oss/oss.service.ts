@@ -30,9 +30,9 @@ export class OssService {
   initAdmin(): OSSExtend {
     return new OSS({
       region: this.configService.config.oss.region,
-      accessKeyId: this.configService.config.oss.adminAccessKeyID,
-      accessKeySecret: this.configService.config.oss.adminAccessKeySecret,
-      bucket: this.configService.config.oss.bucketName,
+      accessKeyId: this.configService.config.oss.admin.accessKeyID,
+      accessKeySecret: this.configService.config.oss.admin.accessKeySecret,
+      bucket: this.configService.config.oss.bucket,
     }) as OSSExtend;
   }
 
@@ -125,7 +125,7 @@ export class OssService {
       {
         headers: { ...this.uploadSignRule },
         callback: {
-          url: this.configService.config.oss.uploadCallbackUrl,
+          url: this.getCallbackServerUrl(),
           body: 'object=${object}&size=${size}&hash=${x:hash}&account=${x:account}',
           contentType: 'application/x-www-form-urlencoded',
           customValue: { hash, account: user.account },
@@ -144,7 +144,7 @@ export class OssService {
    */
   generateUploadCallback(user: User, hash: string): Record<string, any> {
     const callback = {
-      callbackUrl: this.configService.config.oss.uploadCallbackUrl,
+      callbackUrl: this.getCallbackServerUrl(),
       callbackBody:
         'object=${object}&size=${size}&hash=${x:hash}&account=${x:account}',
       callbackBodyType: 'application/x-www-form-urlencoded',
@@ -168,7 +168,7 @@ export class OssService {
    * @return {string} object
    */
   generateObject(user: User, hash: string, name: string): string {
-    return `storage/${user.account}/${hash}-${name}`;
+    return `${this.configService.config.oss.storageRoot}/${user.account}/${hash}-${name}`;
   }
 
   /**
@@ -177,9 +177,18 @@ export class OssService {
    */
   async verifyCallback(req: Request) {
     try {
-      await verifyUploadCallback(req, this.configService.config.oss.bucketName);
+      await verifyUploadCallback(req, this.configService.config.oss.bucket);
     } catch (err) {
       throw new BadRequestException(err.message);
     }
+  }
+
+  /**
+   * @description: 获取回调服务器地址
+   * @return {string} 服务器接口地址
+   */
+  getCallbackServerUrl(): string {
+    const { server, oss } = this.configService.config;
+    return `${server.protocol}://${server.host}:${server.port}/${oss.uploadCallbackPath}`;
   }
 }
