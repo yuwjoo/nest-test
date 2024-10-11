@@ -3,7 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { initSwagger } from './common/swagger';
 import { DEFAULT_CONFIG } from './common/constants';
-import { DefaultConfig } from './configuration/configuration.interface';
+import { DefaultConfig } from './interfaces/configuration.interface';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

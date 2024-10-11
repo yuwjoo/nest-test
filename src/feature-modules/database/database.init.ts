@@ -1,8 +1,8 @@
+import { Permission } from 'src/entities/permission.entity';
+import { Role } from 'src/entities/role.entity';
+import { StorageFile, StorageFileType } from 'src/entities/storage-file.entity';
+import { User } from 'src/entities/user.entity';
 import { EntityManager } from 'typeorm';
-import { Permission } from '../entities/permission.entity';
-import { Role } from '../entities/role.entity';
-import { StorageFile, StorageFileType } from '../entities/storage-file.entity';
-import { User } from '../entities/user.entity';
 
 /**
  * @description: 初始化数据库
