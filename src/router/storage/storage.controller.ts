@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query, Redirect } from '@nestjs/common';
 import { StorageService } from './storage.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { GetUser } from 'src/decorators/get-user.decorator';
 import { User } from 'src/database/entities/user.entity';
 import { FileListDto } from './dto/file-list-dto';
 import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';
@@ -13,7 +13,7 @@ import { RenameFileVo } from './vo/rename-file.vo';
 import { DeleteFileDto } from './dto/delete-file.dto';
 import { MoveFileVo } from './vo/move-file.vo';
 import { MoveFileDto } from './dto/move-file.dto';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from 'src/decorators/public.decorator';
 import { GetFileCoverDto } from './dto/get-file-cover.dto';
 import { BatchDeleteFileDto } from './dto/batch-delete-file.dto';
 import { DownloadFileDto } from './dto/download-file.dto';

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/database/entities/user.entity';
+import { CustomJwtPayload } from 'src/interfaces/jwt.interface';
 import { UserService } from 'src/shared-modules/user/user.service';
-import { CustomJwtPayload } from './types/jwt';
 
 @Injectable()
-export class AuthService {
+export class AuthenticationService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
@@ -26,16 +26,6 @@ export class AuthService {
   }
 
   /**
-   * @description: 生成Token
-   * @param {User} user 用户信息
-   * @return {string} token
-   */
-  generateToken(user: User): string {
-    const payload: CustomJwtPayload = { account: user.account };
-    return this.jwtService.sign(payload);
-  }
-
-  /**
    * @description: 校验JWT
    * @param {string} token token
    * @param {string} account 账号
@@ -48,5 +38,15 @@ export class AuthService {
       (record) => record.token === token,
     );
     return available ? user : null;
+  }
+
+  /**
+   * @description: 生成Token
+   * @param {User} user 用户信息
+   * @return {string} token
+   */
+  generateToken(user: User): string {
+    const payload: CustomJwtPayload = { account: user.account };
+    return this.jwtService.sign(payload);
   }
 }

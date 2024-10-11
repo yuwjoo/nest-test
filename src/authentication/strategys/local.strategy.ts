@@ -1,12 +1,12 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { AuthService } from '../auth.service';
 import { User } from 'src/database/entities/user.entity';
+import { AuthenticationService } from '../authentication.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private authService: AuthService) {
+  constructor(private readonly authenticationService: AuthenticationService) {
     super({
       usernameField: 'account',
       passwordField: 'password',
@@ -20,7 +20,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
    * @return {Promise<User>} 用户信息
    */
   async validate(account: string, password: string): Promise<User> {
-    const user = await this.authService.validateUser(account, password);
+    const user = await this.authenticationService.validateUser(
+      account,
+      password,
+    );
     if (!user) {
       throw new BadRequestException('账号或密码错误');
     }

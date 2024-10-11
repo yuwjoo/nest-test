@@ -1,14 +1,14 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
+import { LocalAuthGuard } from 'src/guards/local-auth.guard';
 import { User } from 'src/database/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';
-import { GetUser } from 'src/auth/decorators/get-user.decorator';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { GetUser } from 'src/decorators/get-user.decorator';
+import { Public } from 'src/decorators/public.decorator';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
-import { GetToken } from 'src/auth/decorators/get-token.decorator';
+import { GetToken } from 'src/decorators/get-token.decorator';
 import { LoginVo } from './vo/login.vo';
 
 @ApiTags('认证')

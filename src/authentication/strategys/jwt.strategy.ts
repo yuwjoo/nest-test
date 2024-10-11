@@ -2,22 +2,22 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/database/entities/user.entity';
-import { CustomJwtPayload } from '../types/jwt';
-import { AuthService } from '../auth.service';
 import { DEFAULT_CONFIG } from 'src/common/constants';
 import { DefaultConfig } from 'src/configuration/configuration.interface';
+import { AuthenticationService } from '../authentication.service';
+import { CustomJwtPayload } from 'src/interfaces/jwt.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @Inject(DEFAULT_CONFIG)
     readonly config: DefaultConfig,
-    private readonly authService: AuthService,
+    private readonly authenticationService: AuthenticationService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // 从请求对象的何处获取token
-      ignoreExpiration: false, // 拦截过期的token
-      secretOrKey: config.secretKeyBase64, // 加密密钥
+      ignoreExpiration: false, // 忽略过期的token
+      secretOrKey: config.secretKeyBase64, // 密钥
       passReqToCallback: true, // 请求对象加入到校验回调参数中
     });
   }
@@ -29,7 +29,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    */
   async validate(request: Request, payload: CustomJwtPayload): Promise<User> {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
-    const user = await this.authService.validateJWT(token, payload.account);
+    const user = await this.authenticationService.validateJWT(
+      token,
+      payload.account,
+    );
     if (!user) {
       throw new UnauthorizedException();
     }

@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LoginRecord } from 'src/database/entities/login-record.entity';
 import { User } from 'src/database/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
-import { AuthService as FunAuthService } from 'src/auth/auth.service';
 import { RegisterDto } from './dto/register.dto';
 import {
   StorageFile,
@@ -13,11 +12,12 @@ import { LoginVo } from './vo/login.vo';
 import { Permission } from 'src/database/entities/permission.entity';
 import { Role } from 'src/database/entities/role.entity';
 import { joinFilePath } from 'src/utils/common';
+import { AuthenticationService } from 'src/authentication/authentication.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly authService: FunAuthService,
+    private readonly authenticationService: AuthenticationService,
     private readonly entityManager: EntityManager,
     @InjectRepository(LoginRecord)
     private readonly loginRecordRepository: Repository<LoginRecord>,
@@ -83,7 +83,7 @@ export class AuthService {
    * @return {Promise<LoginVo>} 登录信息
    */
   async login(user: User): Promise<LoginVo> {
-    const token = this.authService.generateToken(user);
+    const token = this.authenticationService.generateToken(user);
 
     if (user.loginRecords.length >= 5) {
       this.entityManager.delete(LoginRecord, user.loginRecords[0].token);
