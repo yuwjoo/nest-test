@@ -1,10 +1,8 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as OSS from 'ali-oss';
-import { OSSExtend, SingUrlInfo } from './types/oss.interface';
+import { OSSExtend, SingUrlInfo } from 'src/interfaces/oss.interface';
 import { User } from 'src/entities/user.entity';
 import { MultipartDto } from 'src/router/upload/dto/multipart.dto';
-import { Request } from 'express';
-import { verifyUploadCallback } from './utils/verify-upload-callback';
 import { DEFAULT_CONFIG } from 'src/common/constants';
 import { DefaultConfig } from 'src/interfaces/configuration.interface';
 
@@ -170,18 +168,6 @@ export class OssService {
    */
   generateObject(user: User, hash: string, name: string): string {
     return `${this.config.oss.storageRoot}/${user.account}/${hash}-${name}`;
-  }
-
-  /**
-   * @description: 校验上传回调
-   * @param {Request} req express请求对象
-   */
-  async verifyCallback(req: Request) {
-    try {
-      await verifyUploadCallback(req, this.config.oss.bucket);
-    } catch (err) {
-      throw new BadRequestException(err.message);
-    }
   }
 
   /**

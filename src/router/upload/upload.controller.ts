@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';
@@ -11,7 +11,7 @@ import { GetMultipartDto } from './dto/get-multiparts.dto';
 import { MergeMultipartDto } from './dto/merge-multipart.dto';
 import { Public } from 'src/decorators/public.decorator';
 import { UploadCallbackDto } from './dto/upload-callback.dto';
-import { Request } from 'express';
+import { OssCallbackAuthGuard } from 'src/guards/oss-callback-auth.guard';
 
 @ApiTags('上传')
 @Controller('upload')
@@ -93,7 +93,8 @@ export class UploadController {
   @ApiCommonResponse({})
   @ApiBearerAuth()
   @Public()
-  callback(@Req() req: Request, @Body() body: UploadCallbackDto) {
-    return this.uploadService.callback(req, body);
+  @UseGuards(OssCallbackAuthGuard)
+  callback(@Body() body: UploadCallbackDto) {
+    return this.uploadService.callback(body);
   }
 }

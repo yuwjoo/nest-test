@@ -3,7 +3,6 @@ import { AuthenticationModule } from './feature-modules/authentication/authentic
 import { ConfigurationModule } from './feature-modules/configuration/configuration.module';
 import { DatabaseModule } from './feature-modules/database/database.module';
 import { InterceptorModule } from './feature-modules/interceptor/interceptor.module';
-import { OssModule } from './shared-modules/oss/oss.module';
 import { RouterModule } from './router/router.module';
 
 @Module({
@@ -12,7 +11,6 @@ import { RouterModule } from './router/router.module';
     ConfigurationModule,
     DatabaseModule,
     InterceptorModule,
-    OssModule,
     RouterModule,
   ],
 })

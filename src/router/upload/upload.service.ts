@@ -10,7 +10,6 @@ import { OssFile } from 'src/entities/oss-file.entity';
 import { Repository } from 'typeorm';
 import { OssService } from 'src/shared-modules/oss/oss.service';
 import { UploadCallbackDto } from './dto/upload-callback.dto';
-import { Request } from 'express';
 
 @Injectable()
 export class UploadService {
@@ -116,8 +115,7 @@ export class UploadService {
    * @description: 上传回调
    * @return {Promise<string>} 上传文件id
    */
-  async callback(req: Request, body: UploadCallbackDto): Promise<string> {
-    await this.ossService.verifyCallback(req);
+  async callback(body: UploadCallbackDto): Promise<string> {
     const ossFile = await this.ossFileRepository.save({
       hash: body.hash,
       size: body.size,
