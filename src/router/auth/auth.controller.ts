@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/guards/local-auth.guard';
 import { User } from 'src/entities/user.entity';
-import { LoginDto } from './dto/login.dto';
+import { LoginRequestDto } from './dto/login-request.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiCommonResponse } from 'src/decorators/api-common-response.decorator';
 import { GetUser } from 'src/decorators/get-user.decorator';
@@ -10,6 +10,11 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { GetToken } from 'src/decorators/get-token.decorator';
 import { LoginVo } from './vo/login.vo';
+import {
+  loginResponseExample,
+  logoutResponseExample,
+  registerResponseExample,
+} from './auth.example';
 
 @ApiTags('认证')
 @Controller('auth')
@@ -18,43 +23,16 @@ export class AuthController {
 
   @Post('register')
   @ApiOperation({ summary: '注册账号' })
-  @ApiCommonResponse({
-    example: `{
-      "msg": "请求成功",
-      "code": 200,
-      "timestamp": 1726733020937
-    }`,
-  })
+  @ApiCommonResponse({ example: registerResponseExample })
   @Public()
-  async register(@Body() registerDto: RegisterDto) {
-    await this.authService.register(registerDto);
+  async register(@Body() registerDto: RegisterDto): Promise<void> {
+    return await this.authService.register(registerDto);
   }
 
   @Post('login')
   @ApiOperation({ summary: '登录账号' })
-  @ApiBody({ type: LoginDto })
-  @ApiCommonResponse({
-    type: LoginVo,
-    example: `{
-      "data": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50IjoieXV3am9vIiwiaWF0IjoxNzI2Nzk2NzkzLCJleHAiOjE3MjkzODg3OTN9.YHc7uXWSrxxXn1bh9v1TiohvzeVxV75QXokz2DPotdM",
-        "user": {
-          "account": "yuwjoo",
-          "nickname": "YH",
-          "avatar": "",
-          "status": "enable",
-          "role": {
-            "name": "user",
-            "describe": "普通用户"
-          },
-          "storageOrigin": "/yuwjoo"
-        }
-      },
-      "msg": "请求成功",
-      "code": 200,
-      "timestamp": 1726796793714
-    }`,
-  })
+  @ApiBody({ type: LoginRequestDto })
+  @ApiCommonResponse({ type: LoginVo, example: loginResponseExample })
   @Public()
   @UseGuards(LocalAuthGuard)
   async login(@GetUser() user: User): Promise<LoginVo> {
@@ -63,15 +41,9 @@ export class AuthController {
 
   @Get('logout')
   @ApiOperation({ summary: '登出账号' })
-  @ApiCommonResponse({
-    example: `{
-      "msg": "请求成功",
-      "code": 200,
-      "timestamp": 1726733020937
-    }`,
-  })
+  @ApiCommonResponse({ example: logoutResponseExample })
   @ApiBearerAuth()
-  async logout(@GetToken() token: string) {
-    await this.authService.logout(token);
+  async logout(@GetToken() token: string): Promise<void> {
+    return await this.authService.logout(token);
   }
 }
