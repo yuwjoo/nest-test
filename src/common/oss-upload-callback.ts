@@ -17,9 +17,7 @@ export async function verifyUploadCallback(req: Request, targetBucket: string) {
   const verifySign = verifySignature(publickKey, signature, sign_str); // 校验签名
   const verifyBucket = req.headers['x-oss-bucket'] === targetBucket; // 校验bucket
 
-  if (!verifySign || !verifyBucket) {
-    return Promise.reject('OSS signature verification failed');
-  }
+  return verifySign && verifyBucket;
 }
 
 /**
